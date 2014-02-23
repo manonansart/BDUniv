@@ -26,8 +26,8 @@ CREATE TABLE tache(
 	date date,
 	tache VARCHAR(15),
 	idPers VARCHAR(10) references personne(idPers) ON DELETE CASCADE,
-	PRIMARY KEY (dateTache, description, idPers),
-	CHECK (description IN ('Enseignement', 'Recherche', 'Réunion'))
+	PRIMARY KEY (date, tache, idPers),
+	CHECK (tache IN ('Enseignement', 'Recherche', 'Réunion'))
 );
 
 CREATE TABLE appartient(
@@ -57,3 +57,6 @@ CREATE USER grtt1 WITH PASSWORD 'grtt1';
 GRANT SELECT, UPDATE ON piece TO grtt42;
 GRANT SELECT ON piece TO grtt1;
 
+-- Les index
+CREATE INDEX personne_nom ON personne (nom varchar_pattern_ops);
+CREATE INDEX reserve_date ON reserve (date);
