@@ -1,0 +1,117 @@
+// Exemple d'exécution où ... tout se passe bien.. 
+
+Connection a la base : tcp:postgresql://asi-pg.insa-rouen.fr:5432/grtt40
+Connection a la base effectuee
+Que voulez-vous faire ?
+1 - Ajouter une personne
+2 - Supprimer une personne
+3 - Faire une réservation de salle
+4 - Afficher la liste des lieux visités par une personne 
+5 - Afficher le rapport d'activité une personne 
+6 - Afficher le rapport d'intrusion 
+7 - SORTIR
+1   
+1 - Ajouter une personne
+Insertion dans PERSONNE(idPers, nom, grade)
+p12
+Marius Theriault
+PU
+Que voulez-vous faire ?
+1 - Ajouter une personne
+2 - Supprimer une personne
+3 - Faire une réservation de salle
+4 - Afficher la liste des lieux visités par une personne 
+5 - Afficher le rapport d'activité une personne 
+6 - Afficher le rapport d'intrusion 
+7 - SORTIR
+2
+2 - Supprimer une personne
+Valeur de l'attribut idPers du tuple a supprimer ?
+p12
+Que voulez-vous faire ?
+1 - Ajouter une personne
+2 - Supprimer une personne
+3 - Faire une réservation de salle
+4 - Afficher la liste des lieux visités par une personne 
+5 - Afficher le rapport d'activité une personne 
+6 - Afficher le rapport d'intrusion 
+7 - SORTIR
+3
+3 - Faire une réservation de salle
+Insertion dans RESERVATION(idPers, date, idPiece)
+p1
+12/05/2014
+s5
+Que voulez-vous faire ?
+1 - Ajouter une personne
+2 - Supprimer une personne
+3 - Faire une réservation de salle
+4 - Afficher la liste des lieux visités par une personne 
+5 - Afficher le rapport d'activité une personne 
+6 - Afficher le rapport d'intrusion 
+7 - SORTIR
+4
+4 - Afficher la liste des lieux visités par une personne 
+Nom de la personne ?)
+Albert Gamotte
+
+------------------------------------------------------ 
+LIEUX VISITES PAR Albert Gamotte --- date - pièce
+------------------------------------------------------ 
+(2014-01-20,s2)
+(2014-01-22,s1)
+------------------------------------------------------ 
+Que voulez-vous faire ?
+1 - Ajouter une personne
+2 - Supprimer une personne
+3 - Faire une réservation de salle
+4 - Afficher la liste des lieux visités par une personne 
+5 - Afficher le rapport d'activité une personne 
+6 - Afficher le rapport d'intrusion 
+7 - SORTIR
+5
+5 - Afficher le rapport d'activité une personne 
+Nom de la personne ?)
+Albert Gamotte
+------------------------------------------------------ 
+RAPPORT D'ACTIVITE DE Albert Gamotte --- date - coherent (VRAI/FAUX)
+------------------------------------------------------ 
+(2014-01-10,VRAI)
+(2014-01-11,FAUX)
+(2014-01-12,FAUX)
+(2014-01-13,VRAI)
+------------------------------------------------------ 
+Que voulez-vous faire ?
+1 - Ajouter une personne
+2 - Supprimer une personne
+3 - Faire une réservation de salle
+4 - Afficher la liste des lieux visités par une personne 
+5 - Afficher le rapport d'activité une personne 
+6 - Afficher le rapport d'intrusion 
+7 - SORTIR
+6
+6 - Afficher le rapport d'intrusion 
+------------------------------------------------------ 
+RAPPORT D'INTRUSION date - salle - intru
+------------------------------------------------------ 
+2014-01-20 s3 Amanda Maire
+2014-01-20 s3 Mousse Line
+2014-01-20 s2 Mousse Line
+2014-01-13 s1 Louis Dort
+2014-05-10 s7 Geo Graff
+2014-01-22 s1 Albert Gamotte
+2014-01-20 s3 Amanda Maire
+2014-01-20 s3 Mousse Line
+------------------------------------------------------ 
+Que voulez-vous faire ?
+1 - Ajouter une personne
+2 - Supprimer une personne
+3 - Faire une réservation de salle
+4 - Afficher la liste des lieux visités par une personne 
+5 - Afficher le rapport d'activité une personne 
+6 - Afficher le rapport d'intrusion 
+7 - SORTIR
+7
+Deconnection
+Deconnection effectuee
+

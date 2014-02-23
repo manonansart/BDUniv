@@ -1,0 +1,67 @@
+idPers VARCHAR(10), nom VARCHAR(20), grade VARCHAR(10)
+'p1', 'Lance Pierre', 'MCF'
+'p2', 'Laure Aidubois', 'MCF'
+'p3', 'AlbertGamotte', 'PU'
+'p4', 'Tina Pachange', 'BIATOSS'
+'p5', 'Bruno Zieuvair', 'PE'
+'p6', 'Geo Graff', 'Etudiant'
+'p7', 'Louis Dort', 'Etudiant'
+'p8', 'Marc Assin', 'Etudiant'
+'p9', 'Mousse Line', 'Etudiant'
+'p10', 'Amanda Maire', 'Etudiant'
+
+idP VARCHAR(10), type VARCHAR(15), gps_lat REAL, gps_long REAL
+'s1', 'Bureau', 49.38, 1.06
+'s2', 'Bureau', 49.38, 1.06
+'s3', 'Bureau', 49.38, 1.06
+'s4', 'Autre', 49.45, 1.06
+'s5', 'Autre', 49.38, 1.06
+'s6', 'Salle de cours', 49.38, 1.06
+'s7', 'Salle de cours', 49.45, 1.06
+
+idPers				  idP
+'p1' est propriétaire de la pièce 's1'      
+'p2' est propriétaire de la pièce 's1'
+'p3' est propriétaire de la pièce 's2'
+'p4' est propriétaire de la pièce 's3'
+
+    date date	idPers				tache varchar(15)
+le '01/02/2014' 'p1' a planifié une tâche 'Enseignement'
+le '02/02/2014' 'p1' a planifié une tâche 'Enseignement'
+le '12/03/2014' 'p1' a planifié une tâche 'Recherche'
+le '01/02/2014' 'p2' a planifié une tâche 'Recherche'
+le '05/02/2014' 'p2' a planifié une tâche 'Enseignement'
+le '10/01/2014' 'p3' a planifié une tâche 'Recherche'
+le '11/01/2014' 'p3' a planifié une tâche 'Recherche'
+le '12/01/2014' 'p3' a planifié une tâche 'Recherche'
+le '13/01/2014' 'p3' a planifié une tâche 'Recherche'
+le '15/03/2014' 'p4' a planifié une tâche 'Réunion'
+le '12/03/2014' 'p4' a planifié une tâche 'Réunion'
+le '10/02/2014' 'p6' a planifié une tâche 'Enseignement'
+le '11/02/2014' 'p6' a planifié une tâche 'Enseignement'
+le '12/02/2014' 'p6' a planifié une tâche 'Enseignement'
+le '10/02/2014' 'p7' a planifié une tâche 'Enseignement'
+le '11/02/2014' 'p7' a planifié une tâche 'Enseignement'
+le '12/02/2014' 'p7' a planifié une tâche 'Enseignement'
+
+    date 	idPers			idP
+le '12/03/2014' 'p1' a réservé la salle 's4'
+le '13/03/2014' 'p2' a réservé la salle 's6'
+le '05/02/2014' 'p2' a réservé la salle 's6'
+le '01/02/2014' 'p2' a réservé la salle 's5'
+le '12/01/2014' 'p3' a réservé la salle 's6'
+le '11/01/2014' 'p3' a réservé la salle 's5'
+le '15/03/2014' 'p4' a réservé la salle 's7'
+
+idPers			     idP	date
+'p1' est passé par la salle 's1' le '12/01/2014'
+'p2' est passé par la salle 's1' le '13/01/2014'
+'p7' est passé par la salle 's1' le '13/01/2014'
+'p5' est passé par la salle 's1' le '14/01/2014'
+'p9' est passé par la salle 's2' le '20/01/2014'
+'p3' est passé par la salle 's2' le '20/01/2014'
+'p10' est passé par la salle 's3' le '20/01/2014'
+'p9' est passé par la salle 's3' le '20/01/2014'
+'p3' est passé par la salle 's1' le '22/01/2014'
+'p6' est passé par la salle 's7' le'10/05/2014'
+
