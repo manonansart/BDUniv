@@ -31,14 +31,14 @@ CREATE TABLE passePar(
 	idP VARCHAR(10) references piece(idP) ON DELETE CASCADE,
 	idPers VARCHAR(10) references personne(idPers) ON DELETE CASCADE,
 	date date,
-	PRIMARY KEY(idP, idPers)
+	PRIMARY KEY(idP, idPers, date)
 );
 
 CREATE TABLE reserve(
 	idP VARCHAR(10) references piece(idP) ON DELETE CASCADE,
 	idPers VARCHAR(10) references personne(idPers) ON DELETE CASCADE,
 	date date,
-	PRIMARY KEY(idP, idPers)
+	PRIMARY KEY(idP, idPers, date)
 );
 
 
