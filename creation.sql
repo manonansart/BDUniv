@@ -4,6 +4,8 @@ DROP TABLE IF EXISTS appartient;
 DROP TABLE IF EXISTS tache;
 DROP TABLE IF EXISTS personne;
 DROP TABLE IF EXISTS piece;
+DROP USER grtt42;
+DROP USER grtt1;
 
 CREATE TABLE piece(
 	idP VARCHAR(10) PRIMARY KEY NOT NULL,
@@ -48,5 +50,10 @@ CREATE TABLE reserve(
 	PRIMARY KEY(idP, idPers)
 );
 
--- Les index
-CREATE INDEX 
+
+-- Les droits
+CREATE USER grtt42 WITH PASSWORD 'grtt42';
+CREATE USER grtt1 WITH PASSWORD 'grtt1';
+GRANT SELECT, UPDATE ON piece TO grtt42;
+GRANT SELECT ON piece TO grtt1;
+
