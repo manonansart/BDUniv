@@ -113,3 +113,14 @@ GRANT SELECT ON piece TO grtt1;
 -- Les index
 CREATE INDEX personne_nom ON personne (nom varchar_pattern_ops);
 CREATE INDEX reserve_date ON reserve (date);
+
+CREATE OR REPLACE FUNCTION tacheCoherente(date date, idPers VARCHAR(10)) RETURNS VARCHAR AS $$
+BEGIN
+RETURN 'vrai';
+END $$ LANGUAGE 'plpgsql';
+
+-- Les VIEW
+CREATE VIEW rapport_activite AS 
+	SELECT t.date date, p.nom nom, tacheCoherente(t.date, p.idPers) ok 
+	FROM tache t, personne p 
+	WHERE t.idPers = p.idPers;
