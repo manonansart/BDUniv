@@ -119,7 +119,7 @@ BEGIN
 RETURN 'vrai';
 END $$ LANGUAGE 'plpgsql';
 
--- Les VIEW
+-- Les vues
 CREATE VIEW rapport_activite AS 
 	SELECT t.date date, p.nom nom, tacheCoherente(t.date, p.idPers) ok 
 	FROM tache t, personne p 
