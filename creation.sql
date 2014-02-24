@@ -45,7 +45,7 @@ CREATE TABLE reserve(
 -- Tuples
 INSERT INTO personne VALUES ('p1', 'Lance Pierre', 'MCF');
 INSERT INTO personne VALUES ('p2', 'Laure Aidubois', 'MCF');
-INSERT INTO personne VALUES ('p3', 'AlbertGamotte', 'PU');
+INSERT INTO personne VALUES ('p3', 'Albert Gamotte', 'PU');
 INSERT INTO personne VALUES ('p4', 'Tina Pachange', 'BIATOSS');
 INSERT INTO personne VALUES ('p5', 'Bruno Zieuvair', 'PE');
 INSERT INTO personne VALUES ('p6', 'Geo Graff', 'Etudiant');
