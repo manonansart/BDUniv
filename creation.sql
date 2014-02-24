@@ -114,9 +114,45 @@ GRANT SELECT ON piece TO grtt1;
 CREATE INDEX personne_nom ON personne (nom varchar_pattern_ops);
 CREATE INDEX reserve_date ON reserve (date);
 
-CREATE OR REPLACE FUNCTION tacheCoherente(date date, idPers VARCHAR(10)) RETURNS VARCHAR AS $$
+CREATE OR REPLACE FUNCTION tacheCoherente(dateTache date, pers VARCHAR(10)) RETURNS VARCHAR AS $$
+DECLARE
+	nbReserv Integer;
+	salleTache VARCHAR;
+	typeTache VARCHAR;
+	
 BEGIN
-RETURN 'vrai';
+	SELECT COUNT(r.idP) INTO nbReserv
+	FROM reserve r
+	WHERE r.idPers = pers AND r.date = dateTache;
+
+	IF (nbReserv = 0) THEN
+		RETURN 'vrai';
+	ELSE
+		SELECT p.type INTO salleTache
+		FROM reserve r, piece p
+		WHERE r.idPers = pers 
+			AND r.date = dateTache
+			AND r.idP = p.idP;
+
+		SELECT t.tache INTO typeTache
+		FROM tache t
+		WHERE t.idPers = pers AND t.date = dateTache;
+
+		IF (salleTache = 'Bureau' AND (typeTache = 'Recherche' OR typeTache = 'Réunion')) THEN
+			RETURN 'vrai';
+		END IF;
+
+		IF (salleTache = 'Salle de Cours' AND typeTache = 'Enseignement') THEN
+			RETURN 'vrai';
+		END IF;
+
+		IF (salleTache = 'Autre' AND typeTache = 'Réunion') THEN
+			RETURN 'vrai';
+		END IF;
+
+		RETURN 'faux';
+	END IF;
+
 END $$ LANGUAGE 'plpgsql';
 
 -- Les vues
