@@ -114,6 +114,7 @@ GRANT SELECT ON piece TO grtt1;
 CREATE INDEX personne_nom ON personne (nom varchar_pattern_ops);
 CREATE INDEX reserve_date ON reserve (date);
 
+-- Les fonctions
 CREATE OR REPLACE FUNCTION tacheCoherente(dateTache date, pers VARCHAR(10)) RETURNS VARCHAR AS $$
 DECLARE
 	nbReserv Integer;
@@ -155,8 +156,46 @@ BEGIN
 
 END $$ LANGUAGE 'plpgsql';
 
+CREATE OR REPLACE FUNCTION estIntru(dateIntru date, pieceIntru VARCHAR(10), idIntru VARCHAR(10) ) RETURNS Integer AS $$
+DECLARE
+	gradeIntru VARCHAR;
+	proprio VARCHAR;
+	passageProprio Integer;
+	
+BEGIN
+	SELECT p.grade INTO gradeIntru
+	FROM personne p
+	WHERE p.idPers = idIntru;
+
+	SELECT a.idPers INTO proprio
+	FROM appartient a
+	WHERE a.idP = pieceIntru;
+
+	IF (gradeIntru = 'PE') THEN
+		RETURN 0;
+	ELSE
+		SELECT count(p.idP) INTO passageProprio
+		FROM passePar p
+		WHERE p.date = dateIntru
+			AND p.idP = pieceIntru
+			AND p.idPers = proprio;
+		IF (passageProprio > 0) THEN
+			RETURN 0;
+		END IF;
+	END IF;
+
+	RETURN 1;
+
+END $$ LANGUAGE 'plpgsql';
+
 -- Les vues
 CREATE VIEW rapport_activite AS 
 	SELECT t.date date, p.nom nom, tacheCoherente(t.date, p.idPers) ok 
 	FROM tache t, personne p 
 	WHERE t.idPers = p.idPers;
+
+CREATE VIEW intrusion AS
+	SELECT p.date date, p.idP salle, pe.nom intru
+	FROM passePar p, personne pe
+	WHERE p.idPers = pe.idPers
+		AND estIntru(p.date, p.idP, p.idPers) = 1;
