@@ -1,0 +1,71 @@
+\documentclass[12pt,titlepage,a4paper]{report}
+
+% Texte
+\usepackage[utf8]{inputenc}
+\usepackage[T1]{fontenc}
+\usepackage[french]{babel}
+\usepackage{lmodern}
+
+% Numéroter les chapitres a partir de chaque début de partie
+\makeatletter\@addtoreset{chapter}{part}\makeatother
+
+% Mise en page
+\usepackage{url}
+\usepackage[top=2.1cm,bottom=2cm,left=1cm,right=1cm]{geometry}
+\usepackage{hyperref}
+\hypersetup{
+    colorlinks=false,
+    pdfborder={0 0 0},
+}
+\usepackage{multirow}
+
+% TOC
+\usepackage[french]{minitoc}
+\setcounter{tocdepth}{0}
+\setcounter{minitocdepth}{2}
+\setlength{\mtcindent}{0pt}
+
+% Images
+\usepackage{float}
+\usepackage{wrapfig}
+\usepackage{graphicx}
+% Pour inclure des pages PDF
+\usepackage[final]{pdfpages}	
+
+% Algorithmique
+\usepackage{minted}
+
+% Couverture
+\usepackage{templateINSA}
+\initINSA
+
+\title{BD Université}
+\author{Manon \bsc{Ansart}\\ Antoine \bsc{Augusti}}
+
+\renewcommand\soustitre{Rapport de projet}
+\renewcommand\infoBig{Projet de bases de données}
+\renewcommand\infoSmall{ASI3 2013-2014}
+
+% Les commandes utiles
+
+% Pour inclure du pseudo-code
+\newcommand{\inputTU}[1]{\inputminted[tabsize=4,linenos]{c}{../programme/tests/test#1.c}}
+
+\def\changemargin#1#2{\list{}{\rightmargin#2\leftmargin#1}\item[]}
+\let\endchangemargin=\endlist 
+
+\begin{document}
+	\titleINSA{15}{images/fond.jpg}{0}{0}{300}{\href{http://commons.wikimedia.org/wiki/File:Servers_at_LAAS_(FDLS_2007)_0389.jpg}{\textcolor{white}{Licence CC - Guillaume Paumier}}}
+
+	\dominitoc
+	\tableofcontents
+
+	\chapter{Introduction}
+	\input{textes/introduction}
+
+	\chapter{Réalisation du projet}
+
+	\chapter{Répartition du travail et conclusion}
+	\input{textes/conclusion}
+
+\end{document}
