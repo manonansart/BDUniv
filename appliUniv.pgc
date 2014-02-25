@@ -97,6 +97,9 @@ int main (int argc, char *argv[])
 			printf("Insertion dans RESERVATION(idPers, date, idPiece)\n");
 			insererReservation();
 			break;
+
+		case 7 :
+			break;
 	}
 
 	printf ("Déconnexion\n");
