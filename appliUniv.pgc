@@ -186,10 +186,11 @@ int main (int argc, char *argv[]) {
 				sortir = 1;
 				break;
 		}
+		EXEC SQL COMMIT;
+		
 	} while (sortir != 1);
 
 	printf ("Déconnexion\n");
-	EXEC SQL COMMIT;
 	EXEC SQL DISCONNECT;
 	printf ("Déconnexion effectuée\n");
 
