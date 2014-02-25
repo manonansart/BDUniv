@@ -1,8 +1,27 @@
 #include <stdio.h>
 #include <string.h>
 #include <sqlca.h>
-#include <postgres.h> /* pour le type relatif aux noms dans la table pg_tables (NAMEDATALEN)*/
-#include <pgtypes_date.h> /* Pour ajouter le type date sql */
+#include <postgres.h> /* Pour le type relatif aux noms dans la table pg_tables (NAMEDATALEN)*/
+#include <pgtypes_date.h> /* Pour ajouter le type date SQL */
+
+void insererReservation()
+{
+	EXEC SQL BEGIN DECLARE SECTION;
+		char idPers[10];
+		char idPiece[10];
+		char dateChaine[20];
+		date dateSQL;
+		const char* requeteInsertionReservation = "INSERT INTO reserve (idP, idPers, date) VALUES (?, ?, ?)";
+	EXEC SQL END DECLARE SECTION;
+
+	scanf("%s", idPers);
+	scanf("%s", dateChaine);
+	scanf("%s", idPiece);
+
+	dateSQL = PGTYPESdate_from_asc(dateChaine, NULL);
+	EXEC SQL PREPARE requetePreparee FROM :requeteInsertionReservation;
+	EXEC SQL EXECUTE requetePreparee USING :idPiece, :idPers, :dateSQL;
+}
 
 void insererPersonne(){
 	EXEC SQL BEGIN DECLARE SECTION;
@@ -37,13 +56,11 @@ int main (int argc, char *argv[])
 
 	/* Gestion des variables programmes */
 	EXEC SQL BEGIN DECLARE SECTION;
-		char base[100];
+		char base[100]; 
 		const char* user = "grtt6";
 		const char* motDePasse = "grtt6";
 	EXEC SQL END DECLARE SECTION;
 
-
-	/* */
 	EXEC SQL INCLUDE sqlca;
 	EXEC SQL WHENEVER sqlerror sqlprint;
 
@@ -53,18 +70,18 @@ int main (int argc, char *argv[])
 	/* --- DEBUT CONNEXION A LA BASE --- */
 	strcpy(base, "tcp:postgresql://127.0.0.1:5432/grtt6");
 
-	printf ("Connexion a la base : %s\n", base);
+	printf ("Connexion à la base : %s\n", base);
 	EXEC SQL CONNECT to :base USER :user USING :motDePasse;
-	printf ("Connexion a la base effectuee\n");
+	printf ("Connexion à la base effectuée\n");
 	/* --- FIN CONNEXION A LA BASE --- */
 
 	printf("Que voulez-vous faire ?\n");
 	printf("1 - Ajouter une personne\n");
 	printf("2 - Supprimer une personne\n");
 	printf("3 - Faire une réservation de salle\n");
-	printf("4 - Afficher la liste des lieux visités par une personne \n");
-	printf("5 - Afficher le rapport d'activité une personne \n");
-	printf("6 - Afficher le rapport d'intrusion \n");
+	printf("4 - Afficher la liste des lieux visités par une personne\n");
+	printf("5 - Afficher le rapport d'activité une personne\n");
+	printf("6 - Afficher le rapport d'intrusion\n");
 	printf("7 - SORTIR\n");
 
 	scanf("%i", &entree);
@@ -74,15 +91,18 @@ int main (int argc, char *argv[])
 			printf("1 - Ajouter une personne\n");
 			insererPersonne();
 			break;
+
+		case 3 :
+			printf("3 - Faire une réservation de salle\n");
+			printf("Insertion dans RESERVATION(idPers, date, idPiece)\n");
+			insererReservation();
+			break;
 	}
 
-
-
-
-	printf ("Deconnexion\n");
+	printf ("Déconnexion\n");
 	EXEC SQL COMMIT;
 	EXEC SQL DISCONNECT;
-	printf ("Deconnexion effectuee\n");
+	printf ("Déconnexion effectuée\n");
 
 	return EXIT_SUCCESS;
 }
