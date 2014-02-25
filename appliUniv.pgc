@@ -26,6 +26,20 @@ void insererReservation() {
 	EXEC SQL EXECUTE requetePreparee USING :idPiece, :idPers, :dateSQL;
 }
 
+void supprimerPersonne() {
+	EXEC SQL BEGIN DECLARE SECTION;
+		char idPers[10];
+		const char* requeteSuppression = "DELETE FROM personne WHERE idPers = ?";
+	EXEC SQL END DECLARE SECTION;
+
+	printf("Valeur de l'attribut idPers du tuple a supprimer : ");
+	scanf("%s", idPers);
+
+	EXEC SQL PREPARE requetePreparee FROM :requeteSuppression;
+	EXEC SQL EXECUTE requetePreparee USING :idPers;
+
+}
+
 void insererPersonne() {
 	EXEC SQL BEGIN DECLARE SECTION;
 		char idPers[10];
@@ -91,6 +105,10 @@ int main (int argc, char *argv[]) {
 		case 1 :
 			printf("1 - Ajouter une personne\n");
 			insererPersonne();
+			break;
+		case 2 :
+			printf("2 - Supprimer une personne\n");
+			supprimerPersonne();
 			break;
 
 		case 3 :
