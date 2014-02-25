@@ -4,8 +4,7 @@
 #include <postgres.h> /* Pour le type relatif aux noms dans la table pg_tables (NAMEDATALEN)*/
 #include <pgtypes_date.h> /* Pour ajouter le type date SQL */
 
-void insererReservation()
-{
+void insererReservation() {
 	EXEC SQL BEGIN DECLARE SECTION;
 		char idPers[10];
 		char idPiece[10];
@@ -14,8 +13,12 @@ void insererReservation()
 		const char* requeteInsertionReservation = "INSERT INTO reserve (idP, idPers, date) VALUES (?, ?, ?)";
 	EXEC SQL END DECLARE SECTION;
 
+	printf("Insertion dans RESERVATION(idPers, date, idPiece)\n");
+	printf("idPers : \n");
 	scanf("%s", idPers);
+	printf("date : \n");
 	scanf("%s", dateChaine);
+	printf("idPiece : \n");
 	scanf("%s", idPiece);
 
 	dateSQL = PGTYPESdate_from_asc(dateChaine, NULL);
@@ -23,7 +26,7 @@ void insererReservation()
 	EXEC SQL EXECUTE requetePreparee USING :idPiece, :idPers, :dateSQL;
 }
 
-void insererPersonne(){
+void insererPersonne() {
 	EXEC SQL BEGIN DECLARE SECTION;
 		char idPers[10];
 		char nom[20];
@@ -39,8 +42,7 @@ void insererPersonne(){
 	printf("grade : ");
 	scanf("%s", grade);
 
-	while (strcmp(grade, "PE") != 0 && strcmp(grade, "BIATOSS") != 0 && strcmp(grade, "Etudiant") != 0 && strcmp(grade, "PU") != 0 && strcmp(grade, "MCF") != 0)
-	{
+	while (strcmp(grade, "PE") != 0 && strcmp(grade, "BIATOSS") != 0 && strcmp(grade, "Etudiant") != 0 && strcmp(grade, "PU") != 0 && strcmp(grade, "MCF") != 0) {
 		printf("Les grades pris en compte sont PE, BIATOSS, Etudiant, PU et MCF. Veuillez entrer un de ces grades.\n");
 		printf("grade : ");
 		scanf("%s", grade);
@@ -50,8 +52,7 @@ void insererPersonne(){
 	EXEC SQL EXECUTE requetePreparee USING :idPers, :nom, :grade;
 }
 
-int main (int argc, char *argv[])
-{
+int main (int argc, char *argv[]) {
 	int entree;
 
 	/* Gestion des variables programmes */
@@ -80,7 +81,7 @@ int main (int argc, char *argv[])
 	printf("2 - Supprimer une personne\n");
 	printf("3 - Faire une réservation de salle\n");
 	printf("4 - Afficher la liste des lieux visités par une personne\n");
-	printf("5 - Afficher le rapport d'activité une personne\n");
+	printf("5 - Afficher le rapport d'activité d'une personne\n");
 	printf("6 - Afficher le rapport d'intrusion\n");
 	printf("7 - SORTIR\n");
 
@@ -94,7 +95,6 @@ int main (int argc, char *argv[])
 
 		case 3 :
 			printf("3 - Faire une réservation de salle\n");
-			printf("Insertion dans RESERVATION(idPers, date, idPiece)\n");
 			insererReservation();
 			break;
 
