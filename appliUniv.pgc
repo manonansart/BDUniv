@@ -81,7 +81,7 @@ int main (int argc, char *argv[]) {
 	printf("2 - Supprimer une personne\n");
 	printf("3 - Faire une réservation de salle\n");
 	printf("4 - Afficher la liste des lieux visités par une personne\n");
-	printf("5 - Afficher le rapport d'activité une personne\n");
+	printf("5 - Afficher le rapport d'activité d'une personne\n");
 	printf("6 - Afficher le rapport d'intrusion\n");
 	printf("7 - SORTIR\n");
 
