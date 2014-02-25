@@ -88,6 +88,38 @@ void rapportActivite() {
 	EXEC SQL CLOSE curseurActivite;
 }
 
+void lieuxVisites() {
+	int arreter = 0;
+	EXEC SQL BEGIN DECLARE SECTION;
+		char nomPersonne[20];
+		char idPiece[10];
+		char* dateChaine;
+		date dateSQL;
+	EXEC SQL END DECLARE SECTION;
+
+	printf("Nom de la personne ?\n");
+	// Attention, on attend une chaîne avec des espaces !
+	scanf(" %[^\n]s",nomPersonne);
+
+	EXEC SQL DECLARE curseurTache CURSOR FOR SELECT pa.date, pa.idP FROM passePar pa , personne p WHERE p.nom = :nomPersonne AND pa.idPers = p.idPers;
+	EXEC SQL OPEN curseurTache;
+	
+	printf("LIEUX VISITES PAR %s --- date - piece\n", nomPersonne);
+	printf("------------------------------------------------------\n");
+	do {
+		EXEC SQL FETCH curseurTache INTO :dateSQL, :idPiece;
+		if (sqlca.sqlerrd[2] == 1) {
+			dateChaine = PGTYPESdate_to_asc(dateSQL);
+			printf("(%s, %s)\n", dateChaine, idPiece);
+		}
+		else
+			arreter = 1;
+	} while (arreter != 1);
+	printf("------------------------------------------------------\n");
+
+	EXEC SQL CLOSE curseurTache;
+}
+
 void supprimerPersonne() {
 	EXEC SQL BEGIN DECLARE SECTION;
 		char idPers[10];
@@ -173,6 +205,10 @@ int main (int argc, char *argv[]) {
 			case 3 :
 				printf("3 - Faire une réservation de salle\n");
 				insererReservation();
+				break;
+			case 4 :
+				printf("4 - Afficher la liste des lieux visités par une personne\n");
+				lieuxVisites();
 				break;
 			case 5 :
 				printf("5 - Afficher le rapport d'activité d'une personne\n");
