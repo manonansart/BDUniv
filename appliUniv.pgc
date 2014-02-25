@@ -29,6 +29,7 @@ void insererReservation() {
 }
 
 void afficherRapportIntrusion() {
+	int arreter = 0;
 	EXEC SQL BEGIN DECLARE SECTION;
 		char nomPersonne[20];
 		char idPiece[10];
@@ -36,12 +37,12 @@ void afficherRapportIntrusion() {
 		date dateSQL;
 	EXEC SQL END DECLARE SECTION;
 	
-	EXEC SQL DECLARE curseur CURSOR FOR SELECT * FROM intrusion;
-	EXEC SQL OPEN curseur;
-	int arreter = 0;
+	EXEC SQL DECLARE curseurIntrusion CURSOR FOR SELECT * FROM intrusion;
+	EXEC SQL OPEN curseurIntrusion;
 	
+	printf("------------------------------------------------------ \n");
 	do {
-		EXEC SQL FETCH curseur INTO :dateSQL, :idPiece, :nomPersonne;
+		EXEC SQL FETCH curseurIntrusion INTO :dateSQL, :idPiece, :nomPersonne;
 		if (sqlca.sqlerrd[2] == 1) {
 			dateChaine = PGTYPESdate_to_asc(dateSQL);
 			printf("%s %s %s\n", dateChaine, idPiece, nomPersonne);
@@ -49,8 +50,41 @@ void afficherRapportIntrusion() {
 		else
 			arreter = 1;
 	} while (arreter != 1);
+	printf("------------------------------------------------------ \n");
 
-	EXEC SQL CLOSE curseur;
+	EXEC SQL CLOSE curseurIntrusion;
+}
+
+void rapportActivite() {
+	int arreter = 0;
+	EXEC SQL BEGIN DECLARE SECTION;
+		char nomPersonne[20];
+		char ok[10];
+		char* dateChaine;
+		date dateSQL;
+	EXEC SQL END DECLARE SECTION;
+
+	printf("Nom de la personne ?\n");
+	// Attention, on attend une chaîne avec des espaces !
+	scanf(" %[^\n]s",nomPersonne);
+
+	EXEC SQL DECLARE curseurActivite CURSOR FOR SELECT date, ok FROM rapport_activite WHERE nom = :nomPersonne;
+	EXEC SQL OPEN curseurActivite;
+	
+	printf("RAPPORT D'ACTIVITE DE %s --- date - cohérent (vrai/faux)\n", nomPersonne);
+	printf("------------------------------------------------------\n");
+	do {
+		EXEC SQL FETCH curseurActivite INTO :dateSQL, :ok;
+		if (sqlca.sqlerrd[2] == 1) {
+			dateChaine = PGTYPESdate_to_asc(dateSQL);
+			printf("(%s, %s)\n", dateChaine, ok);
+		}
+		else
+			arreter = 1;
+	} while (arreter != 1);
+	printf("------------------------------------------------------\n");
+
+	EXEC SQL CLOSE curseurActivite;
 }
 
 void supprimerPersonne() {
@@ -64,7 +98,6 @@ void supprimerPersonne() {
 
 	EXEC SQL PREPARE requetePreparee FROM :requeteSuppression;
 	EXEC SQL EXECUTE requetePreparee USING :idPers;
-
 }
 
 void insererPersonne() {
@@ -140,11 +173,13 @@ int main (int argc, char *argv[]) {
 				printf("3 - Faire une réservation de salle\n");
 				insererReservation();
 				break;
+			case 5 :
+				printf("5 - Afficher le rapport d'activité d'une personne\n");
+				rapportActivite();
+				break;
 			case 6 : 
 				printf("RAPPORT D'INTRUSION date - salle - intru\n");
-				printf("------------------------------------------------------ \n");
 				afficherRapportIntrusion();
-				printf("------------------------------------------------------ \n");
 				break;
 			case 7 :
 				sortir = 1;
