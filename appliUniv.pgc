@@ -53,6 +53,20 @@ void afficherRapportIntrusion() {
 	EXEC SQL CLOSE curseur;
 }
 
+void supprimerPersonne() {
+	EXEC SQL BEGIN DECLARE SECTION;
+		char idPers[10];
+		const char* requeteSuppression = "DELETE FROM personne WHERE idPers = ?";
+	EXEC SQL END DECLARE SECTION;
+
+	printf("Valeur de l'attribut idPers du tuple à supprimer : ");
+	scanf("%s", idPers);
+
+	EXEC SQL PREPARE requetePreparee FROM :requeteSuppression;
+	EXEC SQL EXECUTE requetePreparee USING :idPers;
+
+}
+
 void insererPersonne() {
 	EXEC SQL BEGIN DECLARE SECTION;
 		char idPers[10];
@@ -118,12 +132,14 @@ int main (int argc, char *argv[]) {
 				printf("1 - Ajouter une personne\n");
 				insererPersonne();
 				break;
-
+			case 2 :
+				printf("2 - Supprimer une personne\n");
+				supprimerPersonne();
+				break;
 			case 3 :
 				printf("3 - Faire une réservation de salle\n");
 				insererReservation();
 				break;
-
 			case 6 : 
 				printf("RAPPORT D'INTRUSION date - salle - intru\n");
 				printf("------------------------------------------------------ \n");
