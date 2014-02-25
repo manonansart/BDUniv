@@ -1,8 +1,10 @@
 #include <stdio.h>
 #include <string.h>
 #include <sqlca.h>
-#include <postgres.h> /* Pour le type relatif aux noms dans la table pg_tables (NAMEDATALEN)*/
-#include <pgtypes_date.h> /* Pour ajouter le type date SQL */
+/* Pour le type relatif aux noms dans la table pg_tables (NAMEDATALEN)*/
+#include <postgres.h>
+/* Pour ajouter le type date SQL */
+#include <pgtypes_date.h>
 
 void insererReservation() {
 	EXEC SQL BEGIN DECLARE SECTION;
@@ -26,13 +28,38 @@ void insererReservation() {
 	EXEC SQL EXECUTE requetePreparee USING :idPiece, :idPers, :dateSQL;
 }
 
+void afficherRapportIntrusion() {
+	EXEC SQL BEGIN DECLARE SECTION;
+		char nomPersonne[20];
+		char idPiece[10];
+		char* dateChaine;
+		date dateSQL;
+	EXEC SQL END DECLARE SECTION;
+	
+	EXEC SQL DECLARE curseur CURSOR FOR SELECT * FROM intrusion;
+	EXEC SQL OPEN curseur;
+	int arreter = 0;
+	
+	do {
+		EXEC SQL FETCH curseur INTO :dateSQL, :idPiece, :nomPersonne;
+		if (sqlca.sqlerrd[2] == 1) {
+			dateChaine = PGTYPESdate_to_asc(dateSQL);
+			printf("%s %s %s\n", dateChaine, idPiece, nomPersonne);
+		}
+		else
+			arreter = 1;
+	} while (arreter != 1);
+
+	EXEC SQL CLOSE curseur;
+}
+
 void supprimerPersonne() {
 	EXEC SQL BEGIN DECLARE SECTION;
 		char idPers[10];
 		const char* requeteSuppression = "DELETE FROM personne WHERE idPers = ?";
 	EXEC SQL END DECLARE SECTION;
 
-	printf("Valeur de l'attribut idPers du tuple a supprimer : ");
+	printf("Valeur de l'attribut idPers du tuple à supprimer : ");
 	scanf("%s", idPers);
 
 	EXEC SQL PREPARE requetePreparee FROM :requeteSuppression;
@@ -68,8 +95,9 @@ void insererPersonne() {
 
 int main (int argc, char *argv[]) {
 	int entree;
+	int sortir = 0;
 
-	/* Gestion des variables programmes */
+	/* Les variables de connexion à la base */
 	EXEC SQL BEGIN DECLARE SECTION;
 		char base[100]; 
 		const char* user = "grtt6";
@@ -79,9 +107,6 @@ int main (int argc, char *argv[]) {
 	EXEC SQL INCLUDE sqlca;
 	EXEC SQL WHENEVER sqlerror sqlprint;
 
-
-	/* Programme */
-
 	/* --- DEBUT CONNEXION A LA BASE --- */
 	strcpy(base, "tcp:postgresql://127.0.0.1:5432/grtt6");
 
@@ -90,35 +115,42 @@ int main (int argc, char *argv[]) {
 	printf ("Connexion à la base effectuée\n");
 	/* --- FIN CONNEXION A LA BASE --- */
 
-	printf("Que voulez-vous faire ?\n");
-	printf("1 - Ajouter une personne\n");
-	printf("2 - Supprimer une personne\n");
-	printf("3 - Faire une réservation de salle\n");
-	printf("4 - Afficher la liste des lieux visités par une personne\n");
-	printf("5 - Afficher le rapport d'activité d'une personne\n");
-	printf("6 - Afficher le rapport d'intrusion\n");
-	printf("7 - SORTIR\n");
+	do {
+		printf("Que voulez-vous faire ?\n");
+		printf("1 - Ajouter une personne\n");
+		printf("2 - Supprimer une personne\n");
+		printf("3 - Faire une réservation de salle\n");
+		printf("4 - Afficher la liste des lieux visités par une personne\n");
+		printf("5 - Afficher le rapport d'activité d'une personne\n");
+		printf("6 - Afficher le rapport d'intrusion\n");
+		printf("7 - SORTIR\n");
 
-	scanf("%i", &entree);
+		scanf("%i", &entree);
 
-	switch(entree) {
-		case 1 :
-			printf("1 - Ajouter une personne\n");
-			insererPersonne();
-			break;
-		case 2 :
-			printf("2 - Supprimer une personne\n");
-			supprimerPersonne();
-			break;
-
-		case 3 :
-			printf("3 - Faire une réservation de salle\n");
-			insererReservation();
-			break;
-
-		case 7 :
-			break;
-	}
+		switch(entree) {
+			case 1 :
+				printf("1 - Ajouter une personne\n");
+				insererPersonne();
+				break;
+			case 2 :
+				printf("2 - Supprimer une personne\n");
+				supprimerPersonne();
+				break;
+			case 3 :
+				printf("3 - Faire une réservation de salle\n");
+				insererReservation();
+				break;
+			case 6 : 
+				printf("RAPPORT D'INTRUSION date - salle - intru\n");
+				printf("------------------------------------------------------ \n");
+				afficherRapportIntrusion();
+				printf("------------------------------------------------------ \n");
+				break;
+			case 7 :
+				sortir = 1;
+				break;
+		}
+	} while (sortir != 1);
 
 	printf ("Déconnexion\n");
 	EXEC SQL COMMIT;
