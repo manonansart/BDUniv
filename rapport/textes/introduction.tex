@@ -1,6 +1,23 @@
-Lorem ipsum dolor sit amet, consectetur adipisicing elit, sed do eiusmod
-tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam,
-quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo
-consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse
-cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non
-proident, sunt in culpa qui officia deserunt mollit anim id est laborum.
+Ce mini-projet conclut les cours Bases de Données 1 et 2 de la première année du département ASI\footnote{ASI : Architecture des Systèmes d'Information.} de l'INSA de Rouen. Il vise à mettre en œuvre les concepts abordés lors de ces cours en réalisant une petite base de données et quelques fonctionnalités sur celle-ci. L'objectif final étant de proposer une application permettant d'interagir avec une base de données correctement modélisée.\\
+
+\section{Processus de réalisation}
+Le processus général pour mener la réalisation d'une base de données est ici simplifié et peut être décrit ainsi :
+\begin{enumerate}[leftmargin=2cm]
+	\item Passage d'un schéma Entité-Association à un modèle relationnel ;
+	\item Définition des domaines, des conditions initiales et des droits ;
+	\item Définition des index sur la base ;
+	\item Création de fonctions et des vues sur la base ;
+	\item Développement d'une application en C afin d'interagir avec la base de données conçue. 
+\end{enumerate}
+
+\section{Livrables attendus}
+Les livrables attendus pour ce mini-projet sont les suivants :
+\begin{itemize}
+	\item Un rapport d'une dizaine de pages expliquant la démarche suivie et les choix de conception effectués ;
+	\item 2 fichiers SQL : 
+		\begin{itemize}
+			\item \code{creation.sql} qui crée la base, les fonctions, les droits, les index et la remplit ;
+			\item \code{suppression.sql} qui supprime tout ce qui a été créé.
+		\end{itemize}
+	\item Un fichier \code{appli.pgc} qui contient l'application permettant d'interagir avec la base de données créée. Ce fichier est à compiler.
+\end{itemize}
