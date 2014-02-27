@@ -41,8 +41,7 @@ CREATE TABLE reserve(
 	PRIMARY KEY(idP, idPers, date)
 );
 
-
--- Tuples
+-- Les données
 INSERT INTO personne VALUES ('p1', 'Lance Pierre', 'MCF');
 INSERT INTO personne VALUES ('p2', 'Laure Aidubois', 'MCF');
 INSERT INTO personne VALUES ('p3', 'Albert Gamotte', 'PU');
@@ -245,7 +244,7 @@ BEGIN
 
 		-- Erreur si aucune tâche n'a été planifiée
 		IF (nbTaches = 0) THEN
-			RAISE EXCEPTION 'Aucune tâche n''a été programmée par % pour le %.' , NEW.idP, NEW.date;
+			RAISE EXCEPTION 'Aucune tâche n''a été planifée par % pour le %.' , NEW.idP, NEW.date;
 		END IF;
 
 		SELECT t.tache INTO typeTache
