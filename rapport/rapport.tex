@@ -50,11 +50,6 @@
 \newcommand{\code}[1]{\texttt{#1}}
 \newcommand{\hlineGras}{\Xhline{2\arrayrulewidth}}
 
-% Les commandes utiles
-
-% Pour inclure du pseudo-code
-\newcommand{\inputTU}[1]{\inputminted[tabsize=4,linenos]{c}{../programme/tests/test#1.c}}
-
 \def\changemargin#1#2{\list{}{\rightmargin#2\leftmargin#1}\item[]}
 \let\endchangemargin=\endlist 
 
@@ -70,6 +65,9 @@
 	\chapter{Réalisation du projet}
 	\section{Gestionnaire de versions}
 	\input{textes/git}
+
+	\section{Serveur PostgreSQL local}
+	\input{textes/postgreSQLlocal}
 
 	\chapter{Répartition du travail et conclusion}
 	\input{textes/conclusion}
