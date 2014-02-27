@@ -6,6 +6,11 @@
 \usepackage[french]{babel}
 \usepackage{lmodern}
 \usepackage{enumitem}
+% Pour les checkmarks
+\usepackage{pifont}
+\usepackage{amssymb}
+% Pour des \hline en gras
+\usepackage{makecell}
 % Numéroter les chapitres à partir de chaque début de partie
 \makeatletter\@addtoreset{chapter}{part}\makeatother
 
@@ -43,6 +48,7 @@
 \renewcommand\infoBig{Projet de bases de données}
 \renewcommand\infoSmall{ASI3 2013-2014}
 \newcommand{\code}[1]{\texttt{#1}}
+\newcommand{\hlineGras}{\Xhline{2\arrayrulewidth}}
 
 % Les commandes utiles
 
