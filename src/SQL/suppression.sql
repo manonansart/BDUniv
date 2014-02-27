@@ -1,5 +1,7 @@
 DROP VIEW rapport_activite;
 DROP VIEW intrusion;
+DROP TRIGGER triggerAppartient ON appartient;
+DROP TRIGGER triggerReservation ON reserve;
 DROP TABLE IF EXISTS reserve;
 DROP TABLE IF EXISTS passePar;
 DROP TABLE IF EXISTS appartient;
@@ -8,5 +10,7 @@ DROP TABLE IF EXISTS personne;
 DROP TABLE IF EXISTS piece;
 DROP FUNCTION tacheCoherente(DATE,VARCHAR(10));
 DROP FUNCTION estIntru(DATE, VARCHAR(10), VARCHAR(10));
+DROP FUNCTION testAppartient();
+DROP FUNCTION testReservation();
 DROP USER grtt42;
 DROP USER grtt1;

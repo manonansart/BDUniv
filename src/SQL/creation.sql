@@ -193,6 +193,83 @@ BEGIN
 
 END $$ LANGUAGE 'plpgsql';
 
+CREATE OR REPLACE FUNCTION testAppartient() RETURNS trigger AS $$
+DECLARE
+	gradePer VARCHAR;
+
+BEGIN
+	SELECT p.grade into gradePer FROM personne p WHERE p.idPers = NEW.idPers;
+
+	IF (gradePer = 'PE' OR gradePer = 'Etudiant') THEN
+		RAISE EXCEPTION '% ne peut être un propriétaire', NEW.idPers;
+	END IF;
+
+	RETURN NEW;
+END $$ LANGUAGE 'plpgsql';
+
+-- Vérifications pour une réservation
+-- 	- La personne doit être un MCF ou un BIATOSS
+-- 	- La salle ne doit pas déjà être réservée
+-- 	- La personne doit avoir une tâche pour cette date
+-- 	- La personne doit réserver une salle cohérente avec la tâche annoncée
+CREATE OR REPLACE FUNCTION testReservation() RETURNS trigger AS $$
+DECLARE
+	nbReserv Integer;
+	nbTaches Integer;
+	salleTache VARCHAR;
+	typeTache VARCHAR;
+	gradePer VARCHAR;
+	
+BEGIN
+	-- Vérification du grade
+	SELECT p.grade into gradePer FROM personne p WHERE p.idPers = NEW.idPers;
+	IF (gradePer <> 'BIATOSS' AND gradePer <> 'MCF') THEN
+		RAISE EXCEPTION '% ne peut réserver une salle', NEW.idPers;
+	END IF;
+
+	SELECT COUNT(r.idP) INTO nbReserv
+	FROM reserve r
+	WHERE r.idP = NEW.idP AND r.date = NEW.date;
+
+	-- Erreur si la salle a déjà été réservée
+	IF (nbReserv <> 0) THEN
+		RAISE EXCEPTION 'La salle % ne peut être réservée pour le % car elle a déjà été reservée.', NEW.idP, NEW.date;
+	ELSE
+		SELECT p.type INTO salleTache
+		FROM piece p
+		WHERE p.idP = NEW.idP;
+
+		SELECT COUNT(t.tache) INTO nbTaches
+		FROM tache t
+		WHERE t.idPers = NEW.idPers AND t.date = NEW.date;
+
+		-- Erreur si aucune tâche n'a été planifiée
+		IF (nbTaches = 0) THEN
+			RAISE EXCEPTION 'Aucune tâche n''a été programmée par % pour le %.' , NEW.idP, NEW.date;
+		END IF;
+
+		SELECT t.tache INTO typeTache
+		FROM tache t
+		WHERE t.idPers = NEW.idPers AND t.date = NEW.date;
+
+		-- On vérifie que la salle réservée est cohérente avec la tâche
+		IF (salleTache = 'Bureau' AND (typeTache = 'Recherche' OR typeTache = 'Réunion')) THEN
+			RETURN NEW;
+		END IF;
+
+		IF (salleTache = 'Salle de Cours' AND typeTache = 'Enseignement') THEN
+			RETURN NEW;
+		END IF;
+
+		IF (salleTache = 'Autre' AND typeTache = 'Réunion') THEN
+			RETURN NEW;
+		END IF;
+
+		RAISE EXCEPTION 'La salle % (réservée à %) ne peut être réservée pour le % par % car elle ne correspond pas à la tâche %.', NEW.idP, salleTache, NEW.date, NEW.idPers, typeTache;
+	END IF;
+
+END $$ LANGUAGE 'plpgsql';
+
 -- Les vues
 CREATE VIEW rapport_activite AS 
 	SELECT t.date date, p.nom nom, tacheCoherente(t.date, p.idPers) ok 
@@ -204,3 +281,12 @@ CREATE VIEW intrusion AS
 	FROM passePar p, personne pe
 	WHERE p.idPers = pe.idPers
 		AND estIntru(p.date, p.idP, p.idPers) = 1;
+
+-- Les triggers
+CREATE TRIGGER triggerAppartient
+BEFORE INSERT OR UPDATE ON appartient
+FOR EACH ROW EXECUTE PROCEDURE testAppartient();
+
+CREATE TRIGGER triggerReservation
+BEFORE INSERT OR UPDATE ON reserve
+FOR EACH ROW EXECUTE PROCEDURE testReservation();
