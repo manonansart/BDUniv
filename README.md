@@ -12,7 +12,11 @@ Dépendances
 
 Création de la base de données
 ----------
-La base utilisée dans ce programme, l'utilisateur associé et le mot de passe sont tous `grtt6`.  Le fichier de création de la base de données se trouve dans `src/SQL/creation.sql`.
+La base utilisée dans ce programme, l'utilisateur associé et le mot de passe sont tous `grtt6`. **Cette base et cet utilisateur ne sont pas créés par le script de création.** Par ailleurs, des droits sont donnés à des utilisateurs `grtt42` et `grtt11`, **qui ne sont pas non plus créés**.  Le fichier de création de la base de données se trouve dans `src/SQL/creation.sql`.
+
+Pour se connecter à la base de données à l'INSA de Rouen, sur la base `grtt6` avec l'utilisateur `grtt6` :
+
+	psql -h asi-pg.insa-rouen.fr -U grtt6 grtt6
 
 Pour se connecter à la base de données en local, sur la base `grtt6` avec l'utilisateur `grtt6` :
 
