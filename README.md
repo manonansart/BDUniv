@@ -31,9 +31,9 @@ Compilation de l'application en C
 ----------
 Il faut se trouver dans le dossier `src/C/` puis taper la commande :
 
-	./compile appliUniv
+	make
 
-Si compile n'est pas un exécutable :
+Si le fichier `compile` n'est pas un exécutable :
 
 	chmod +x compile
 
