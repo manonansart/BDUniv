@@ -12,7 +12,7 @@ void insererReservation() {
 		char idPiece[10];
 		char dateChaine[20];
 		date dateSQL;
-		const char* requeteInsertionReservation = "INSERT INTO reserve (idP, idPers, date) VALUES (?, ?, ?)";
+		const char* requeteInsertionReservation = "INSERT INTO reservation (idP, idPers, date) VALUES (?, ?, ?)";
 	EXEC SQL END DECLARE SECTION;
 
 	printf("Insertion dans RESERVATION(idPers, date, idPiece)\n");
@@ -174,7 +174,7 @@ int main (int argc, char *argv[]) {
 	EXEC SQL WHENEVER sqlerror sqlprint;
 
 	/* --- DEBUT CONNEXION A LA BASE --- */
-	strcpy(base, "tcp:postgresql://127.0.0.1:5432/grtt6");
+	strcpy(base, "tcp:postgresql://asi-pg.insa-rouen.fr:5432/grtt6");
 
 	printf ("Connexion à la base : %s\n", base);
 	EXEC SQL CONNECT to :base USER :user USING :motDePasse;
