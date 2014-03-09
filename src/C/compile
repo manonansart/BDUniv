@@ -1,8 +1,8 @@
 #!/bin/bash
-#usage : ./compile fichiersansextension
-echo "ecpg"
+# Utilisation : ./compile fichiersansextension
+echo "ECPG"
 ecpg $1
-echo "compilation"
+echo "Compilation"
 gcc -g -Wall  -c -I/usr/include/postgresql $1.c
-echo "edition des liens"
+echo "Édition des liens"
 gcc -o $1 $1.o -L/usr/lib -lpq -lpgtypes -lecpg 

@@ -34,15 +34,14 @@ CREATE TABLE passePar(
 	PRIMARY KEY(idP, idPers, date)
 );
 
-CREATE TABLE reserve(
+CREATE TABLE reservation(
 	idP VARCHAR(10) references piece(idP) ON DELETE CASCADE,
 	idPers VARCHAR(10) references personne(idPers) ON DELETE CASCADE,
 	date date,
 	PRIMARY KEY(idP, idPers, date)
 );
 
-
--- Tuples
+-- Les données
 INSERT INTO personne VALUES ('p1', 'Lance Pierre', 'MCF');
 INSERT INTO personne VALUES ('p2', 'Laure Aidubois', 'MCF');
 INSERT INTO personne VALUES ('p3', 'Albert Gamotte', 'PU');
@@ -85,13 +84,13 @@ INSERT INTO tache (date, idPers, tache) VALUES ('10/02/2014', 'p7', 'Enseignemen
 INSERT INTO tache (date, idPers, tache) VALUES ('11/02/2014', 'p7', 'Enseignement');
 INSERT INTO tache (date, idPers, tache) VALUES ('12/02/2014', 'p7', 'Enseignement');
 
-INSERT INTO reserve(date, idPers, idP) VALUES('12/03/2014', 'p1', 's4');
-INSERT INTO reserve(date, idPers, idP) VALUES('13/03/2014', 'p2', 's6');
-INSERT INTO reserve(date, idPers, idP) VALUES('05/02/2014', 'p2', 's6');
-INSERT INTO reserve(date, idPers, idP) VALUES('01/02/2014', 'p2', 's5');
-INSERT INTO reserve(date, idPers, idP) VALUES('12/01/2014', 'p3', 's6');
-INSERT INTO reserve(date, idPers, idP) VALUES('11/01/2014', 'p3', 's5');
-INSERT INTO reserve(date, idPers, idP) VALUES('15/03/2014', 'p4', 's7');
+INSERT INTO reservation(date, idPers, idP) VALUES('12/03/2014', 'p1', 's4');
+INSERT INTO reservation(date, idPers, idP) VALUES('13/03/2014', 'p2', 's6');
+INSERT INTO reservation(date, idPers, idP) VALUES('05/02/2014', 'p2', 's6');
+INSERT INTO reservation(date, idPers, idP) VALUES('01/02/2014', 'p2', 's5');
+INSERT INTO reservation(date, idPers, idP) VALUES('12/01/2014', 'p3', 's6');
+INSERT INTO reservation(date, idPers, idP) VALUES('11/01/2014', 'p3', 's5');
+INSERT INTO reservation(date, idPers, idP) VALUES('15/03/2014', 'p4', 's7');
 
 INSERT INTO passePar(idPers, idP, date) VALUES('p1', 's1', '12/01/2014');
 INSERT INTO passePar(idPers, idP, date) VALUES('p2', 's1', '13/01/2014');
@@ -104,15 +103,9 @@ INSERT INTO passePar(idPers, idP, date) VALUES('p9', 's3', '20/01/2014');
 INSERT INTO passePar(idPers, idP, date) VALUES('p3', 's1', '22/01/2014');
 INSERT INTO passePar(idPers, idP, date) VALUES('p6', 's7','10/05/2014');
 
--- Les droits
-CREATE USER grtt42 WITH PASSWORD 'grtt42';
-CREATE USER grtt1 WITH PASSWORD 'grtt1';
-GRANT SELECT, UPDATE ON piece TO grtt42;
-GRANT SELECT ON piece TO grtt1;
-
 -- Les index
 CREATE INDEX personne_nom ON personne (nom varchar_pattern_ops);
-CREATE INDEX reserve_date ON reserve (date);
+CREATE INDEX reservation_date ON reservation (date);
 
 -- Les fonctions
 CREATE OR REPLACE FUNCTION tacheCoherente(dateTache date, pers VARCHAR(10)) RETURNS VARCHAR AS $$
@@ -123,14 +116,14 @@ DECLARE
 	
 BEGIN
 	SELECT COUNT(r.idP) INTO nbReserv
-	FROM reserve r
+	FROM reservation r
 	WHERE r.idPers = pers AND r.date = dateTache;
 
 	IF (nbReserv = 0) THEN
 		RETURN 'vrai';
 	ELSE
 		SELECT p.type INTO salleTache
-		FROM reserve r, piece p
+		FROM reservation r, piece p
 		WHERE r.idPers = pers 
 			AND r.date = dateTache
 			AND r.idP = p.idP;
@@ -193,6 +186,72 @@ BEGIN
 
 END $$ LANGUAGE 'plpgsql';
 
+CREATE OR REPLACE FUNCTION testAppartient() RETURNS trigger AS $$
+DECLARE
+	gradePer VARCHAR;
+
+BEGIN
+	SELECT p.grade into gradePer FROM personne p WHERE p.idPers = NEW.idPers;
+
+	IF (gradePer = 'PE' OR gradePer = 'Etudiant') THEN
+		RAISE EXCEPTION '% ne peut être un propriétaire', NEW.idPers;
+	END IF;
+
+	RETURN NEW;
+END $$ LANGUAGE 'plpgsql';
+
+-- Vérifications pour une réservation
+-- 	- La personne doit être un MCF ou un BIATOSS
+-- 	- La salle ne doit pas déjà être réservée
+-- 	- La personne doit réserver une salle cohérente avec la tâche annoncée
+CREATE OR REPLACE FUNCTION testReservation() RETURNS trigger AS $$
+DECLARE
+	nbReserv Integer;
+	salleTache VARCHAR;
+	typeTache VARCHAR;
+	gradePer VARCHAR;
+	
+BEGIN
+	-- Vérification du grade
+	SELECT p.grade into gradePer FROM personne p WHERE p.idPers = NEW.idPers;
+	IF (gradePer <> 'BIATOSS' AND gradePer <> 'MCF') THEN
+		RAISE EXCEPTION '% ne peut réserver une salle', NEW.idPers;
+	END IF;
+
+	SELECT COUNT(r.idP) INTO nbReserv
+	FROM reservation r
+	WHERE r.idP = NEW.idP AND r.date = NEW.date;
+
+	-- Erreur si la salle a déjà été réservée
+	IF (nbReserv <> 0) THEN
+		RAISE EXCEPTION 'La salle % ne peut être réservée pour le % car elle a déjà été reservée.', NEW.idP, NEW.date;
+	ELSE
+		SELECT p.type INTO salleTache
+		FROM piece p
+		WHERE p.idP = NEW.idP;
+
+		SELECT t.tache INTO typeTache
+		FROM tache t
+		WHERE t.idPers = NEW.idPers AND t.date = NEW.date;
+
+		-- On vérifie que la salle réservée est cohérente avec la tâche
+		IF (salleTache = 'Bureau' AND (typeTache = 'Recherche' OR typeTache = 'Réunion')) THEN
+			RETURN NEW;
+		END IF;
+
+		IF (salleTache = 'Salle de Cours' AND typeTache = 'Enseignement') THEN
+			RETURN NEW;
+		END IF;
+
+		IF (salleTache = 'Autre' AND typeTache = 'Réunion') THEN
+			RETURN NEW;
+		END IF;
+
+		RAISE EXCEPTION 'La salle % (réservée à %) ne peut être réservée pour le % par % car elle ne correspond pas à la tâche %.', NEW.idP, salleTache, NEW.date, NEW.idPers, typeTache;
+	END IF;
+
+END $$ LANGUAGE 'plpgsql';
+
 -- Les vues
 CREATE VIEW rapport_activite AS 
 	SELECT t.date date, p.nom nom, tacheCoherente(t.date, p.idPers) ok 
@@ -204,3 +263,30 @@ CREATE VIEW intrusion AS
 	FROM passePar p, personne pe
 	WHERE p.idPers = pe.idPers
 		AND estIntru(p.date, p.idP, p.idPers) = 1;
+
+-- Les triggers
+CREATE TRIGGER triggerAppartient
+BEFORE INSERT OR UPDATE ON appartient
+FOR EACH ROW EXECUTE PROCEDURE testAppartient();
+
+CREATE TRIGGER triggerReservation
+BEFORE INSERT OR UPDATE ON reservation
+FOR EACH ROW EXECUTE PROCEDURE testReservation();
+
+-- Les droits
+GRANT SELECT, UPDATE, DELETE ON tache TO grtt42;
+GRANT SELECT, UPDATE, DELETE ON passepar TO grtt42;
+GRANT SELECT, UPDATE, DELETE ON piece TO grtt42;
+GRANT SELECT, UPDATE, DELETE ON personne TO grtt42;
+GRANT SELECT, UPDATE, DELETE ON rapport_activite TO grtt42;
+GRANT SELECT, UPDATE, DELETE ON intrusion TO grtt42;
+GRANT SELECT, UPDATE, DELETE ON appartient TO grtt42;
+GRANT SELECT, UPDATE, DELETE ON reservation TO grtt42;
+GRANT SELECT ON tache TO grtt11;
+GRANT SELECT ON passepar TO grtt11;
+GRANT SELECT ON piece TO grtt11;
+GRANT SELECT ON personne TO grtt11;
+GRANT SELECT ON rapport_activite TO grtt11;
+GRANT SELECT ON intrusion TO grtt11;
+GRANT SELECT ON appartient TO grtt11;
+GRANT SELECT ON reservation TO grtt11;
