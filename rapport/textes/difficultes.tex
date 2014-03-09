@@ -1,0 +1,205 @@
+La fonctionnalité nous ayant posé le plus de difficultés a été le rapport d'intrusion. En effet, après avoir écrit une première version de la fonction estIntru qui nous paraissait cohérente, nous avons constaté que les résultats obtenus ne correpondaient pas à ceux de l'exemple d'utilisation. \\
+
+ 
+
+CREATE OR REPLACE FUNCTION estIntru(dateIntru date, pieceIntru VARCHAR(10), idIntru VARCHAR(10) ) RETURNS Integer AS \$\$
+
+DECLARE
+
+	gradeIntru VARCHAR;
+
+	proprio VARCHAR;
+
+	passageProprio Integer;
+
+	
+
+BEGIN
+
+	SELECT p.grade INTO gradeIntru
+
+	FROM personne p
+
+	WHERE p.idPers = idIntru;
+
+
+
+	SELECT a.idPers INTO proprio
+
+	FROM appartient a
+
+	WHERE a.idP = pieceIntru;
+
+
+
+	IF (gradeIntru = 'PE') THEN
+
+		RETURN 0;
+
+	ELSE
+
+		SELECT count(p.idP) INTO passageProprio
+
+		FROM passePar p
+
+		WHERE p.date = dateIntru
+
+			AND p.idP = pieceIntru
+
+			AND p.idPers = proprio;
+
+		IF (passageProprio > 0) THEN
+
+			RETURN 0;
+
+		END IF;
+
+	END IF;
+
+
+
+	RETURN 1;
+
+
+
+END \$\$ LANGUAGE 'plpgsql'; \\
+
+
+Les résultats que nous étions sensés obtenir étaient :
+\begin{center}
+	\begin{tabular}
+		{| l |	c |	c |} \hline
+		2014-01-20 & s3 & Amanda Maire \\ \hline
+		2014-01-20 & s3 & Mousse Line \\ \hline
+		2014-01-20 & s2 & Mousse Line \\ \hline
+		2014-01-13 & s1 & Louis Dort \\ \hline
+		2014-05-10 & s7 & Geo Graff \\ \hline
+		2014-01-22 & s1 & Albert Gamotte \\ \hline
+		2014-01-20 & s3 & Amanda Maire \\ \hline
+		2014-01-20 & s3 & Mousse Line \\ \hline
+	\end{tabular}
+\end{center}
+
+Mais nous obtenions les résultats suivant :
+\begin{center}
+	\begin{tabular}
+		{| l |	c |	c |} \hline
+		2014-01-13 & s1 & Laure Aidubois \\ \hline
+		2014-01-22 & s1 & Albert Gamotte \\ \hline
+		2014-05-10 & s7 & Geo Graff \\ \hline
+		2014-01-13 & s1 & Louis Dort \\ \hline
+		2014-01-20 & s3 & Mousse Line \\ \hline
+		2014-01-20 & s3 & Amanda Maire \\ \hline
+	\end{tabular}
+\end{center}
+
+
+
+Le rapport d'intrusion résultant d'une fonction assez compliquée, ils nous était très difficile de trouver la source de ces différences et d'expliquer nos erreurs en regardant simplement les tables. Nous avons donc été amenés à écrire une requête SQL nous permettant d'avoir une vue d'ensemble et de mieux voir quels tuples nous manquaient, quels tuples nous avions en trop et pourquoi.\\
+
+Nous avons donc utilisé la requête :
+
+SELECT p.nom, p.idPers, p.grade, pa.date, pa.idP, a.idPers Proprietaire 
+
+FROM personne p, passepar pa, appartient a 
+
+WHERE p.idPers=pa.idPers AND a.idP=pa.idP;
+
+qui nous a affiché les résultats suivants :
+
+\begin{center}
+	\begin{tabular}
+		{| l |	c |	c | c | c | c |} \hline
+		nom       & idpers &  grade   &    date    & idp & proprietaire \\ \hlineGras
+		 Lance Pierre   & p1      & MCF      & 2014-01-12 & s1  & p1 \\ \hline
+		 Lance Pierre   & p1     & MCF      & 2014-01-12 & s1  & p2 \\ \hline
+		 Laure Aidubois & p2     & MCF      & 2014-01-13 & s1  & p1 \\ \hline 
+		 Laure Aidubois & p2     & MCF      & 2014-01-13 & s1  & p2 \\ \hline
+		 Louis Dort     & p7     & Etudiant & 2014-01-13 & s1  & p1 \\ \hline
+		 Louis Dort     & p7     & Etudiant & 2014-01-13 & s1  & p2 \\ \hline
+		 Bruno Zieuvair & p5     & PE       & 2014-01-14 & s1  & p1 \\ \hline
+		 Bruno Zieuvair & p5     & PE       & 2014-01-14 & s1  & p2 \\ \hline
+		 Mousse Line    & p9     & Etudiant & 2014-01-20 & s2  & p3 \\ \hline
+		 Albert Gamotte & p3     & PU       & 2014-01-20 & s2  & p3 \\ \hline
+		 Amanda Maire   & p10    & Etudiant & 2014-01-20 & s3  & p4 \\ \hline
+		 Mousse Line    & p9     & Etudiant & 2014-01-20 & s3  & p4 \\ \hline
+		 Albert Gamotte & p3     & PU       & 2014-01-22 & s1  & p1 \\ \hline
+		 Albert Gamotte & p3     & PU       & 2014-01-22 & s1  & p2 \\ \hline
+	\end{tabular}
+\end{center}
+
+
+Ainsi nous avons pu voir que 2014-01-13 | s1    | Laure Aidubois, considéré comme un intru par notre fonction, était la deusième propriétaire de la salle s1 dans laquelle elle se trouve et ne devait donc pas être considéré comme intru. De ce fait 	 2014-01-13 | s1    | Louis Dort, présent au même moment, ne devait pas être considéré comme un intru non plus.
+
+Nous en avons conclu que notre fonction ne gérait pas les propriétaires multiple pour un même bureau.\\
+
+De même, nous avons constaté que le tuple 2014-05-10 | s7    | Geo Graff, présent dans notre rapport d'intrusion, n'apparaissait même pas dans les résultats que nous obtenions, et ceci pour une raison simple : la salle s7 étant une salle de cours, elle ne possède pas de propriétaire.
+
+Nous avons donc pu voir que notre fonction ne gérait pas les pièces autres que les bureaux, qui ne possédent pas de propriétaires et qui ne devaient donc pas être prises en compte dans le rapport d'intrusion.\\
+
+À l'aide de cette requête nous avons donc pu repérer nos erreurs et effectuer les modifications necessaires pour obtenir des résultats cohérents :\\
+
+CREATE OR REPLACE FUNCTION estIntru(dateIntru date, pieceIntru VARCHAR(10), idIntru VARCHAR(10) ) RETURNS Integer AS \$\$
+
+DECLARE
+
+	gradeIntru VARCHAR;
+	
+	proprio VARCHAR;
+	
+	typePiece VARCHAR;
+	
+	passageProprio Integer;
+	
+
+BEGIN
+	
+	SELECT p.grade INTO gradeIntru
+	
+	FROM personne p
+	
+	WHERE p.idPers = idIntru;
+
+	
+	SELECT pi.type INTO typePiece
+	
+	FROM piece pi
+	
+	WHERE pi.idP = pieceIntru;
+
+
+	
+	IF (gradeIntru = 'PE' OR typePiece != 'Bureau') THEN
+	
+		RETURN 0;
+	
+	ELSE
+	
+		SELECT count(p.idP) INTO passageProprio
+	
+		FROM passePar p
+	
+		WHERE p.date = dateIntru
+	
+			AND p.idP = pieceIntru
+	
+			AND p.idPers IN 
+	
+				(SELECT a.idPers
+	
+				FROM appartient a
+	
+				WHERE a.idP = pieceIntru);
+	
+		IF (passageProprio > 0) THEN
+	
+			RETURN 0;
+	
+		END IF;
+	
+	END IF;
+
+	
+	RETURN 1;
+
+END \$\$ LANGUAGE 'plpgsql';
