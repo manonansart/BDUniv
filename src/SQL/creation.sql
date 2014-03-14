@@ -210,7 +210,8 @@ DECLARE
 	salleTache VARCHAR;
 	typeTache VARCHAR;
 	gradePer VARCHAR;
-	
+	nbTaches Integer;
+
 BEGIN
 	-- Vérification du grade
 	SELECT p.grade into gradePer FROM personne p WHERE p.idPers = NEW.idPers;
@@ -230,10 +231,19 @@ BEGIN
 		FROM piece p
 		WHERE p.idP = NEW.idP;
 
+		SELECT COUNT(t.tache) INTO nbTaches
+		FROM tache t
+		WHERE t.idPers = NEW.idPers AND t.date = NEW.date;
+
 		SELECT t.tache INTO typeTache
 		FROM tache t
 		WHERE t.idPers = NEW.idPers AND t.date = NEW.date;
 
+		-- Si aucune tâche n'a été réservée c'est ok
+		IF (nbTaches = 0) THEN
+			RETURN NEW;
+		END IF;
+		
 		-- On vérifie que la salle réservée est cohérente avec la tâche
 		IF (salleTache = 'Bureau' AND (typeTache = 'Recherche' OR typeTache = 'Réunion')) THEN
 			RETURN NEW;
