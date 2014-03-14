@@ -1,0 +1,11 @@
+\subsection{Choix des clés}
+Pour les tables \textbf{\code{piece}} et \textbf{\code{personne}} on choisit comme clés primaires \code{idP} et \code{idPers} car ils identifient clairement une pièce ou une personne. On choisit ces attributs comme clés primaires et ces attributs seront utilisés comme clés étrangères dans d'autres tables.\\
+
+Pour les tables \textbf{\code{passePar}} et \textbf{\code{reservation}} nous devons définir comme clé primaire les attributs \code{idP}, \code{idPers} et \code{date} car on référence un événement qui se déroule à une date et qui lie une pièce à une personne. Il est nécessaire d'utiliser les 3 attributs comme clés primaires dans ces deux tables pour identifier un tuple. Cette tables sont des tables de liaison donc on utilise les clés primaires des tables que l'on veut lier.\\
+
+Pour la table \textbf{\code{tache}}  nous devons définir comme clé primaire les attributs \code{tache}, \code{idPers} et \code{date} car on référence une tache planifiée par une personne à une date. L'explication est très similaire au paragraphe précédent. Cette tables sont des tables de liaison donc on utilise les clés primaires des tables que l'on veut lier.\\
+
+Enfin, pour la table \textbf{\code{appartient}} on choisit comme clé primaire les attributs \code{idP} et \code{idPers} pour permettre de dire qu'une personne est propriétaire d'une pièce. Cette table est une table de liaison donc on utilise les clés primaires des tables que l'on veut lier.
+
+
+\subsection{Choix des contraintes}

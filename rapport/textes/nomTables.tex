@@ -1,0 +1,43 @@
+\subsection{Table piece}
+\begin{itemize}
+	\item \code{type} : le type de la pièce. Les valeurs possibles sont : Bureau, Salle de Cours, Autre.
+	\item \code{gps\_lat} : latitude de la pièce.
+	\item \code{gps\_long} : longitude de la pièce.
+\end{itemize}
+
+\subsection{Table personne}
+\begin{itemize}
+	\item \code{idPers} : l'identifiant de la personne.
+	\item \code{nom} : le nom de la personne.
+	\item \code{grade} : le grade de la personne. Les valeurs possibles sont : Etudiant, MCF, PU, BIATOSS, PE
+\end{itemize}
+
+\subsection{Table tache}
+\begin{itemize}
+	\item \code{date} : la date de la tâche.
+	\item \code{tache} : la description de la tâche planifée. Les valeurs possibles sont : Enseignement, Recherche, Réunion.
+	\item \code{idPers} : l'identifiant de la personne.
+\end{itemize}
+
+\subsection{Table appartient}
+\begin{itemize}
+	\item \code{idP} : l'identifiant de la pièce.
+	\item \code{idPers} : l'identifiant de la personne.
+\end{itemize}
+
+\subsection{Table passePar}
+\begin{itemize}
+	\item \code{idP} : l'identifiant de la pièce.
+	\item \code{idPers} : l'identifiant de la personne.
+	\item \code{date} : la date du passage.
+\end{itemize}
+
+\subsection{Table reservation}
+\begin{itemize}
+	\item \code{idP} : l'identifiant de la pièce.
+	\item \code{idPers} : l'identifiant de la personne.
+	\item \code{date} : la date de la réservation.
+\end{itemize}
+
+\vspace{30px}
+Les types des attributs peuvent être retrouvés dans le fichier de création des tables : \code{src/SQL/creation.sql}.

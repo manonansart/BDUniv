@@ -61,19 +61,42 @@
 	\tableofcontents
 
 	\chapter{Introduction}
-	\input{textes/introduction}
+		\input{textes/introduction}
 
 	\chapter{Réalisation du projet}
-	\section{Gestionnaire de versions}
-	\input{textes/git}
+		\section{Gestionnaire de versions}
+		\input{textes/git}
 
-	\section{Serveur PostgreSQL local}
-	\input{textes/postgreSQLlocal}
-	
-	\section{Difficultés rencontrées}
-	\input{textes/difficultes}
+		\section{Noms des tables et des attributs}
+		\input{textes/nomTables}
+
+		\section{Choix des clés et des contraintes}
+		\input{textes/choixClesContraintes}
+
+		\section{Serveur PostgreSQL local}
+		\input{textes/postgreSQLlocal}
+		
+		\section{Difficultés rencontrées}
+		\input{textes/difficultes}
+
+	\chapter{Ce qui aurait pu être fait}
+		\section{Contraintes supplémentaires}
+		\input{textes/contraintesSupplementaires}
 
 	\chapter{Répartition du travail et conclusion}
-	\input{textes/conclusion}
+		\input{textes/conclusion}
+
+	\chapter{Annexes}
+		\section{Code source SQL}
+			\subsection{creation.sql}
+			\inputminted[tabsize=4,linenos,fontsize=\small]{sql}{../src/SQL/creation.sql}
+
+			\subsection{suppression.sql}		
+			\inputminted[tabsize=4,linenos,fontsize=\small]{sql}{../src/SQL/suppression.sql}
+
+		\section{Code source C}
+			\subsection{appliUniv.pgc}
+			\inputminted[tabsize=4,linenos,fontsize=\small]{sql}{../src/C/appliUniv.pgc}
+
 
 \end{document}
