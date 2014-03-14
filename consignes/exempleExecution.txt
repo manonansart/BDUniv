@@ -95,12 +95,7 @@ Que voulez-vous faire ?
 RAPPORT D'INTRUSION date - salle - intru
 ------------------------------------------------------ 
 2014-01-20 s3 Amanda Maire
-2014-01-20 s3 Mousse Line
-2014-01-20 s2 Mousse Line
-2014-01-13 s1 Louis Dort
-2014-05-10 s7 Geo Graff
 2014-01-22 s1 Albert Gamotte
-2014-01-20 s3 Amanda Maire
 2014-01-20 s3 Mousse Line
 ------------------------------------------------------ 
 Que voulez-vous faire ?
