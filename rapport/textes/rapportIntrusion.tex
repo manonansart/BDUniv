@@ -1,9 +1,8 @@
-\subsection{Rapport d'intrusion}
-La fonctionnalité nous ayant posé le plus de difficultés a été le rapport d'intrusion. En effet, après avoir écrit une première version de la fonction \textit{estIntru} qui nous paraissait cohérente, nous avons constaté que les résultats obtenus ne correspondaient pas à ceux de l'exemple d'utilisation. \\
+La fonctionnalité nous ayant posé le plus de difficultés a été le rapport d'intrusion. En effet, après avoir écrit une première version de la fonction \code{estIntru} qui nous paraissait cohérente, nous avons constaté que les résultats obtenus ne correspondaient pas à ceux de l'exemple d'utilisation. \\
 
 \inputminted[tabsize=4,linenos,fontsize=\small]{sql}{code/1.sql}
 
-Les résultats que nous étions censés obtenir étaient :
+Les résultats que nous étions censés obtenir avec la première version du fichier d'exemple d'exécution étaient :
 \begin{center}
 	\begin{tabular}
 		{| l |	c |	c |} \hline
@@ -69,6 +68,6 @@ De même, nous avons constaté que le tuple \textit{2014-05-10 | s7 | Geo Graff}
 
 Nous avons donc pu voir que notre fonction ne gérait pas les pièces autres que les bureaux, qui ne possèdent pas de propriétaires et qui ne devaient donc pas être prises en compte dans le rapport d'intrusion.\\
 
-À l'aide de cette requête nous avons donc pu repérer nos erreurs et effectuer les modifications nécessaires pour obtenir des résultats cohérents :\\
+À l'aide de cette requête nous avons donc pu repérer nos erreurs et effectuer les modifications nécessaires pour obtenir des résultats cohérents. Nous avons ainsi pu corriger notre fonction \code{estIntru} dont le code est le suivant :\\
 
 \inputminted[tabsize=4,linenos,fontsize=\small]{sql}{code/3.sql}
