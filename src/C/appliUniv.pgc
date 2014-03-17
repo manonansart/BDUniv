@@ -1,6 +1,8 @@
 #include <stdio.h>
 #include <string.h>
 #include <sqlca.h>
+#include <stdlib.h>
+#include <string.h>
 /* Pour le type relatif aux noms dans la table pg_tables (NAMEDATALEN)*/
 #include <postgres.h>
 /* Pour ajouter le type date SQL */
@@ -10,6 +12,9 @@ void insererReservation() {
 	EXEC SQL BEGIN DECLARE SECTION;
 		char idPers[10];
 		char idPiece[10];
+		char jourChaine[5];
+		char moisChaine[5];
+		char anneeChaine[5];
 		char dateChaine[20];
 		date dateSQL;
 		const char* requeteInsertionReservation = "INSERT INTO reservation (idP, idPers, date) VALUES (?, ?, ?)";
@@ -18,8 +23,61 @@ void insererReservation() {
 	printf("Insertion dans RESERVATION(idPers, date, idPiece)\n");
 	printf("idPers : \n");
 	scanf("%s", idPers);
-	printf("date : \n");
-	scanf("%s", dateChaine);
+	printf("Date de la réservation\n");
+
+	int dateValide = 0;
+	do {
+		printf("Jour (JJ) :\n");
+		scanf("%s", jourChaine);
+		printf("Mois (MM) :\n");
+		scanf("%s", moisChaine);
+		printf("Année (AAAA) :\n");
+		scanf("%s", anneeChaine);
+
+		// Conversion en entiers pour vérifier la date
+		int jour, mois, annee;
+		jour = atoi(jourChaine);
+		mois = atoi(moisChaine);
+		annee = atoi(anneeChaine);
+		
+		// Les différents jours max dans les mois
+		int joursDansLesMois[12] = {31, 28, 31, 30, 31, 30, 31, 31, 30, 31, 30, 31};
+
+		// Année bissextile ?
+		if (annee % 400 == 0 || (annee % 100 != 0 && annee % 4 == 0))
+			joursDansLesMois[1] = 29;
+
+		// Le jour correspond bien au mois ?
+		if (mois <= 12) {
+			if (jour <= joursDansLesMois[mois-1])
+				dateValide = 1;
+		}
+
+		if (dateValide == 0)
+		  printf("Merci d'entrer une date valide.\n");
+	} while(dateValide == 0);
+
+	// Si l'utilisateur a rentré une date sur 1 seul caractère on est gentil avec lui
+	if (strlen(moisChaine) == 1) {
+		moisChaine[1] = moisChaine[0];
+		moisChaine[0] = '0';
+	}
+
+	// Si l'utilisateur a rentré une date sur 1 seul caractère on est gentil avec lui
+	if (strlen(jourChaine) == 1) {
+		jourChaine[1] = jourChaine[0];
+		jourChaine[0] = '0';
+	}
+
+	// Passage au format AAAA-MM-DD pour PostgreSQL
+	strcpy(dateChaine, anneeChaine);
+  	strcat(dateChaine, "-");
+  	strcat(dateChaine, moisChaine);
+  	strcat(dateChaine, "-");
+  	strcat(dateChaine, jourChaine);
+
+  	printf("dateChaine : %s\n", dateChaine);
+
 	printf("idPiece : \n");
 	scanf("%s", idPiece);
 
