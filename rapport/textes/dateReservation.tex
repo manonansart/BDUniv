@@ -1,0 +1,8 @@
+Dans l'application nous devions être en mesure de pouvoir créer une réservation d'une salle par une personne pour une date. Nous avons rencontré des problèmes car la fonction \code{PGTYPESdate\_from\_asc} ne comprend pas toujours les dates rentrées au format français classique (c'est-à-dire JJ/MM/AAAA).\\
+
+Pour être certains que la date soit bien interprétée par la fonction, nous avons choisi de demander la date au format \textit{JJ/MM/AAAA} à l'utilisateur que nous transformons ensuite au format \textit{AAAA-MM-JJ} qui est un format accepté comme indiqué dans la documentation \url{http://www.postgresql.org/docs/9.3/static/ecpg-pgtypes.html}, partie 33.6.2.\\
+
+Par ailleurs nous avons vérifié que la date entrée par l'utilisateur était bien d'un format valide : le jour existe bien dans le mois demandé et dans l'année demandée. En cas de problème, nous demandons une nouvelle saisie de la date. Nous n'avons pas eu de problème particulier pour cette validation qui est un algorithme classique.\\
+
+Au final le code écrit est le suivant :
+\inputminted[tabsize=4,linenos,fontsize=\small]{c}{code/validationDate.c}

@@ -25,6 +25,7 @@ void insererReservation() {
 	scanf("%s", idPers);
 	printf("Date de la réservation\n");
 
+	// On indique que la date n'est pas valide initialement
 	int dateValide = 0;
 	do {
 		printf("Jour (JJ) :\n");
@@ -75,8 +76,6 @@ void insererReservation() {
   	strcat(dateChaine, moisChaine);
   	strcat(dateChaine, "-");
   	strcat(dateChaine, jourChaine);
-
-  	printf("dateChaine : %s\n", dateChaine);
 
 	printf("idPiece : \n");
 	scanf("%s", idPiece);
