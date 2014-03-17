@@ -22,7 +22,7 @@ do {
 		joursDansLesMois[1] = 29;
 
 	// Le jour correspond bien au mois ?
-	if (mois <= 12) {
+	if (mois <= 12 && mois >= 1) {
 		if (jour <= joursDansLesMois[mois-1])
 		dateValide = 1;
 	}
