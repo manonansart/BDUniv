@@ -8,6 +8,9 @@
 /* Pour ajouter le type date SQL */
 #include <pgtypes_date.h>
 
+// Affichage des erreurs
+EXEC SQL WHENEVER sqlerror sqlprint;
+
 void insererReservation() {
 	EXEC SQL BEGIN DECLARE SECTION;
 		char idPers[10];
@@ -228,8 +231,6 @@ int main (int argc, char *argv[]) {
 	EXEC SQL END DECLARE SECTION;
 
 	EXEC SQL INCLUDE sqlca;
-	EXEC SQL WHENEVER SQLERROR sqlprint;
-	EXEC SQL WHENEVER SQLWARNING sqlprint;
 
 	/* --- DEBUT CONNEXION A LA BASE --- */
 	strcpy(base, "tcp:postgresql://asi-pg.insa-rouen.fr:5432/grtt6");

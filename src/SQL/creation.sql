@@ -216,7 +216,7 @@ BEGIN
 	-- Vérification du grade
 	SELECT p.grade into gradePer FROM personne p WHERE p.idPers = NEW.idPers;
 	IF (gradePer <> 'BIATOSS' AND gradePer <> 'MCF') THEN
-		RAISE EXCEPTION '% ne peut réserver une salle', NEW.idPers;
+		RAISE EXCEPTION '% ne peut réserver une salle car c''est un %', NEW.idPers, gradePer;
 	END IF;
 
 	SELECT COUNT(r.idP) INTO nbReserv
