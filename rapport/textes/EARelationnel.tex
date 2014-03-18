@@ -40,6 +40,6 @@ En suivant chaque étape du cours, nous avons obtenu les résultats suivants :
 \subsection{Critique du modèle Entité-Relationnel}
 	On remarque que le modèle semble bien conçus et n'engendre aucun problème. Par exemple, il n'y a pas de redondances des données, les informations concernant les personnes (nom, grades) ou les pièces (coordonées, type) ne sont pas répétées pour chaque reservation de salle avec ce modèle et le modèle relationnel qui en découle. 
 	
-	De ce fait, les mises à jour n'induisent pas d'incohérence : si le nom de la personne est modifié, il ne faut pas le changer à diverant endroits pour rester cohérent.
+	De ce fait, les mises à jour n'induisent pas d'incohérence : si le nom de la personne est modifié, il ne faut pas le changer à differants endroits pour rester cohérent.\\
 	
-	On remarque également l'absence d'anomalie de suppression. Une personne ne peut être concernée par aucune association, c'est à dire qu'elle ne possède pas de bureau, n'est passée par aucune pièce et n'a rien reservé, on peut tout de même conserver les informations la concernant puisqu'elles sont séparées.
+	On remarque également l'absence d'anomalie de suppression. Une personne peut n'être concernée par aucune association, c'est à dire qu'elle ne possède pas de bureau, n'est passée par aucune pièce et n'a rien reservé, on peut tout de même conserver les informations la concernant puisqu'elles sont séparées.
