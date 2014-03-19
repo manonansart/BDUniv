@@ -251,6 +251,11 @@ BEGIN
 		IF (nbTaches = 0) THEN
 			RETURN NEW;
 		END IF;
+
+		-- Les BIATOSS ne réservent que des salles de type 'Autre'
+		IF (gradePer = 'BIATOSS' AND salleTache <> 'Autre') THEN
+			RAISE EXCEPTION 'Les BIATOSS ne peuvent réserver que des salles de type Autre';
+		END IF;
 		
 		-- On vérifie que la salle réservée est cohérente avec la tâche
 		IF (salleTache = 'Bureau' AND (typeTache = 'Recherche' OR typeTache = 'Réunion')) THEN
