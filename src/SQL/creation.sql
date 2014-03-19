@@ -217,7 +217,7 @@ BEGIN
 	SELECT p.grade into gradePer
 	FROM personne p
 	WHERE p.idPers = NEW.idPers;
-	
+
 	IF (gradePer <> 'BIATOSS' AND gradePer <> 'MCF' AND gradePer <> 'PU') THEN
 		RAISE EXCEPTION '% ne peut réserver une salle car c''est un %', NEW.idPers, gradePer;
 	END IF;
@@ -296,7 +296,7 @@ BEGIN
 	END IF;
 
 	IF (gradePersonne = 'BIATOSS' AND typeDeLaTache <> 'Réunion') THEN
-		RAISE EXCEPTION 'Un étudiant ne peut pas effectuer une tâche de type %.', typeDeLaTache;
+		RAISE EXCEPTION 'Un BIATOSS ne peut pas effectuer une tâche de type %.', typeDeLaTache;
 	END IF;
 
 	-- Vérification entre pièce et tâche
