@@ -262,6 +262,51 @@ BEGIN
 
 END $$ LANGUAGE 'plpgsql';
 
+CREATE OR REPLACE FUNCTION testTache() 
+RETURNS trigger AS $$ 
+DECLARE 
+	gradePersonne VARCHAR;
+	typePiece VARCHAR;
+BEGIN
+
+	SELECT p.grade INTO gradePersonne 
+	FROM personne p 
+	WHERE NEW.idPers = p.idPers;
+
+	SELECT p.type INTO typePiece 
+	FROM piece p, reservation r 
+	WHERE p.idP = r.idP
+	AND NEW.date = r.date;
+
+	-- Vérification du grade
+	IF (gradePersonne = 'PE') THEN
+		RAISE EXCEPTION 'Les personnels d''entretien ne sont pas concernés par cette gestion de planning.';
+	END IF;
+
+	IF (gradePersonne = 'Etudiant' AND typeDeLaTache <> 'Enseignement') THEN
+		RAISE EXCEPTION 'Un BIATOSS ne peut pas effectuer une tâche de type %.', typeDeLaTache;
+	END IF;
+
+	IF (gradePersonne = 'BIATOSS' AND typeDeLaTache <> 'Réunion') THEN
+		RAISE EXCEPTION 'Un étudiant ne peut pas effectuer une tâche de type %.', typeDeLaTache;
+	END IF;
+
+	-- Vérification entre pièce et tâche
+	IF (typePiece = 'Bureau' AND NEW.description = 'Enseignement') THEN
+		RAISE EXCEPTION 'Un bureau ne peut pas être réservé pour faire de l''enseignement.';
+	END IF;
+
+	IF (typePiece = 'Salle de Cours' AND NEW.description <> 'Enseignement') THEN
+		RAISE EXCEPTION 'Une salle de cours ne peut être réservée que pour faire de l''enseignement.';
+	END IF;
+
+	IF (typePiece = 'Autre' AND NEW.description <> 'Réunion') THEN
+		RAISE EXCEPTION 'Une salle de type autre ne peut être réservée que pour faire une réunion.';
+	END IF;
+
+RETURN NEW;
+END $$ LANGUAGE 'plpgsql';
+
 -- Les vues
 CREATE VIEW rapport_activite AS 
 	SELECT t.date date, p.nom nom, tacheCoherente(t.date, p.idPers) ok 
@@ -272,7 +317,7 @@ CREATE VIEW intrusion AS
 	SELECT p.date date, p.idP salle, pe.nom intru
 	FROM passePar p, personne pe
 	WHERE p.idPers = pe.idPers
-		AND estIntru(p.date, p.idP, p.idPers) = 1;
+	AND estIntru(p.date, p.idP, p.idPers) = 1;
 
 -- Les triggers
 CREATE TRIGGER triggerAppartient
@@ -282,6 +327,10 @@ FOR EACH ROW EXECUTE PROCEDURE testAppartient();
 CREATE TRIGGER triggerReservation
 BEFORE INSERT OR UPDATE ON reservation
 FOR EACH ROW EXECUTE PROCEDURE testReservation();
+
+CREATE TRIGGER triggerTache
+BEFORE INSERT OR UPDATE ON tache 
+FOR EACH ROW EXECUTE PROCEDURE testTache();
 
 -- Les droits
 GRANT SELECT, UPDATE, DELETE ON tache TO grtt42;
