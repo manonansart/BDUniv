@@ -9,6 +9,6 @@ Enfin, pour la table \textbf{\code{appartient}} on choisit comme clé primaire l
 
 
 \subsection{Choix des contraintes}
-Parmi les contraintes qu'il nous a semblé primordiale de respecter, la première était l'unicité des clés primaires qui devaient églament être non-nulles. C'est pourquoi pour chaque table nous avons renseigné les clés primaires décrites précédemment par \code{PRIMARY KEY}.\\
+Parmi les contraintes qu'il nous a semblé primordial de respecter, la première était l'unicité des clés primaires qui devaient églament être non nulles. C'est pourquoi pour chaque table nous avons renseigné les clés primaires décrites précédemment par \code{PRIMARY KEY}.\\
 
-Nous avons également veillé au respect des contraintes pour les clés étrangères en utilisant \code{references}. Ainsi, pour la table \code{tache}, nous avons indiqué que l'attribut \code{idPers} était une clé étrangère faisant référence à \code{idPers}, la clé de \code{personne}. De même, pour les tables \code{appartient}, \code{passePar} et \code{reservation}, \code{idP} et \code{idPers} sont deux clés étrangères correspondant respectivement aux clés primaires de \code{piece} et \code{personne}.\\
+Nous avons également veillé au respect des contraintes pour les clés étrangères en utilisant \code{references}. Ainsi, pour la table \code{tache}, nous avons indiqué que l'attribut \code{idPers} était une clé étrangère faisant référence à \code{idPers}, la clé de la table \code{personne}. De même, pour les tables \code{appartient}, \code{passePar} et \code{reservation}, \code{idP} et \code{idPers} sont deux clés étrangères correspondant respectivement aux clés primaires de \code{piece} et \code{personne}.\\
