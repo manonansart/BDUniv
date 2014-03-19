@@ -201,7 +201,7 @@ BEGIN
 END $$ LANGUAGE 'plpgsql';
 
 -- Vérifications pour une réservation
--- 	- La personne doit être un MCF ou un BIATOSS
+-- 	- La personne doit être un MCF, un PU ou un BIATOSS
 -- 	- La salle ne doit pas déjà être réservée
 -- 	- La personne doit réserver une salle cohérente avec la tâche annoncée
 CREATE OR REPLACE FUNCTION testReservation() RETURNS trigger AS $$
@@ -214,9 +214,17 @@ DECLARE
 
 BEGIN
 	-- Vérification du grade
-	SELECT p.grade into gradePer FROM personne p WHERE p.idPers = NEW.idPers;
-	IF (gradePer <> 'BIATOSS' AND gradePer <> 'MCF') THEN
+	SELECT p.grade into gradePer
+	FROM personne p
+	WHERE p.idPers = NEW.idPers;
+	
+	IF (gradePer <> 'BIATOSS' AND gradePer <> 'MCF' AND gradePer <> 'PU') THEN
 		RAISE EXCEPTION '% ne peut réserver une salle car c''est un %', NEW.idPers, gradePer;
+	END IF;
+
+	-- Pas de réservation dans le passé
+	IF (NEW.date < current_date) THEN
+		RAISE EXCEPTION 'Vous ne pouvez pas réserver une salle pour une date passée.';
 	END IF;
 
 	SELECT COUNT(r.idP) INTO nbReserv
@@ -292,15 +300,15 @@ BEGIN
 	END IF;
 
 	-- Vérification entre pièce et tâche
-	IF (typePiece = 'Bureau' AND NEW.description = 'Enseignement') THEN
+	IF (typePiece = 'Bureau' AND NEW.tache = 'Enseignement') THEN
 		RAISE EXCEPTION 'Un bureau ne peut pas être réservé pour faire de l''enseignement.';
 	END IF;
 
-	IF (typePiece = 'Salle de Cours' AND NEW.description <> 'Enseignement') THEN
+	IF (typePiece = 'Salle de Cours' AND NEW.tache <> 'Enseignement') THEN
 		RAISE EXCEPTION 'Une salle de cours ne peut être réservée que pour faire de l''enseignement.';
 	END IF;
 
-	IF (typePiece = 'Autre' AND NEW.description <> 'Réunion') THEN
+	IF (typePiece = 'Autre' AND NEW.tache <> 'Réunion') THEN
 		RAISE EXCEPTION 'Une salle de type autre ne peut être réservée que pour faire une réunion.';
 	END IF;
 
