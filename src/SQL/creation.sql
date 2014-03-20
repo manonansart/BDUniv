@@ -165,7 +165,6 @@ BEGIN
 	FROM piece pi
 	WHERE pi.idP = pieceIntru;
 
-
 	IF (gradeIntru = 'PE' OR typePiece != 'Bureau') THEN
 		RETURN 0;
 	ELSE
@@ -188,31 +187,31 @@ END $$ LANGUAGE 'plpgsql';
 
 -- Vérifications pour les propriétaires de pièce
 -- 	- La personne ne peut être un PE ou un Etudiant
--- 	- La personne n'est pas déjà propriétaire de la pièce
+-- 	- La personne n'est pas déjà propriétaire d'une autre pièce
 -- 	- La pièce est bien un bureau
 -- 	- La pièce ne compte pas plus de 2 propriétaires
 CREATE OR REPLACE FUNCTION testAppartient() RETURNS trigger AS $$
 DECLARE
 	gradePer VARCHAR;
 	typePiece VARCHAR;
+	piecePossedee VARCHAR;
 	possedeDejaPiece Integer;
 	nbProprietaires Integer;
 
 BEGIN
-	SELECT p.grade into gradePer
+	SELECT p.grade INTO gradePer
 	FROM personne p
 	WHERE p.idPers = NEW.idPers;
 
-	SELECT type into typePiece
+	SELECT type INTO typePiece
 	FROM piece
 	WHERE idP = NEW.idP;
 
-	SELECT COUNT(idP) into possedeDejaPiece
+	SELECT COUNT(idP) INTO possedeDejaPiece
 	FROM appartient
-	WHERE idPers = NEW.idPers
-	AND idP = NEW.idP;
+	WHERE idPers = NEW.idPers;
 
-	SELECT COUNT(idP) into nbProprietaires
+	SELECT COUNT(idP) INTO nbProprietaires
 	FROM appartient
 	WHERE idP = NEW.idP;
 
@@ -221,9 +220,13 @@ BEGIN
 		RAISE EXCEPTION '% ne peut être un propriétaire car c''est un %.', NEW.idPers, gradePer;
 	END IF;
 
-	-- La personne n'est pas déjà propriétaire de la pièce
+	-- La personne n'est pas déjà propriétaire d'une autre pièce
 	IF (possedeDejaPiece = 1) THEN
-		RAISE EXCEPTION 'La personne % est déjà propriétaire de la pièce %.', NEW.idPers, NEW.idP;
+		SELECT idP INTO piecePossedee
+		FROM appartient
+		WHERE idPers = NEW.idPers;
+
+		RAISE EXCEPTION 'La personne % est déjà propriétaire de la pièce % et ne peut donc pas être propriétaire de la pièce %.', NEW.idPers, piecePossedee, NEW.idP;
 	END IF;
 
 	-- La pièce est bien un bureau
@@ -254,7 +257,7 @@ DECLARE
 
 BEGIN
 	-- Vérification du grade
-	SELECT p.grade into gradePer
+	SELECT p.grade INTO gradePer
 	FROM personne p
 	WHERE p.idPers = NEW.idPers;
 
@@ -386,14 +389,14 @@ BEFORE INSERT OR UPDATE ON tache
 FOR EACH ROW EXECUTE PROCEDURE testTache();
 
 -- Les droits
-GRANT SELECT, UPDATE tache TO grtt42;
-GRANT SELECT, UPDATE passepar TO grtt42;
-GRANT SELECT, UPDATE piece TO grtt42;
-GRANT SELECT, UPDATE personne TO grtt42;
-GRANT SELECT, UPDATE rapport_activite TO grtt42;
-GRANT SELECT, UPDATE intrusion TO grtt42;
-GRANT SELECT, UPDATE appartient TO grtt42;
-GRANT SELECT, UPDATE reservation TO grtt42;
+GRANT SELECT, UPDATE ON tache TO grtt42;
+GRANT SELECT, UPDATE ON passepar TO grtt42;
+GRANT SELECT, UPDATE ON piece TO grtt42;
+GRANT SELECT, UPDATE ON personne TO grtt42;
+GRANT SELECT, UPDATE ON rapport_activite TO grtt42;
+GRANT SELECT, UPDATE ON intrusion TO grtt42;
+GRANT SELECT, UPDATE ON appartient TO grtt42;
+GRANT SELECT, UPDATE ON reservation TO grtt42;
 GRANT SELECT ON tache TO grtt11;
 GRANT SELECT ON passepar TO grtt11;
 GRANT SELECT ON piece TO grtt11;
