@@ -189,12 +189,42 @@ END $$ LANGUAGE 'plpgsql';
 CREATE OR REPLACE FUNCTION testAppartient() RETURNS trigger AS $$
 DECLARE
 	gradePer VARCHAR;
+	typePiece VARCHAR;
+	possedeDejaPiece Integer;
+	nbProprietaires Integer;
 
 BEGIN
-	SELECT p.grade into gradePer FROM personne p WHERE p.idPers = NEW.idPers;
+	SELECT p.grade into gradePer
+	FROM personne p
+	WHERE p.idPers = NEW.idPers;
+
+	SELECT type into typePiece
+	FROM piece
+	WHERE idP = NEW.idP;
+
+	SELECT COUNT(idP) into possedeDejaPiece
+	FROM appartient
+	WHERE idPers = NEW.idPers
+	AND idP = NEW.idP;
+
+	SELECT COUNT(idP) into nbProprietaires
+	FROM appartient
+	WHERE idP = NEW.idP;
 
 	IF (gradePer = 'PE' OR gradePer = 'Etudiant') THEN
-		RAISE EXCEPTION '% ne peut être un propriétaire', NEW.idPers;
+		RAISE EXCEPTION '% ne peut être un propriétaire car c''est un %.', NEW.idPers, gradePer;
+	END IF;
+
+	IF (possedeDejaPiece = 1) THEN
+		RAISE EXCEPTION 'La personne % est déjà propriétaire de la pièce %.', NEW.idPers, NEW.idP;
+	END IF;
+
+	IF (typePiece <> 'Bureau') THEN
+		RAISE EXCEPTION 'La pièce % n''est pas un bureau et ne peut donc appartenir à personne.', NEW.idP;
+	END IF;
+
+	IF (nbProprietaires >= 2) THEN
+		RAISE EXCEPTION 'La pièce % possède déjà 2 propriétaires et ne peut donc en avoir un troisième.', NEW.idP;
 	END IF;
 
 	RETURN NEW;
