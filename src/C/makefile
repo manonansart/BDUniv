@@ -1,5 +1,4 @@
-all : compilAppli
-compilAppli : appliUniv
+all : appliUniv
 
 appliUniv : appliUniv.pgc
 	./compile appliUniv
