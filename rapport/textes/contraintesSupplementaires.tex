@@ -1,5 +1,8 @@
 \subsection{Contraintes sur les dates}
-Il aurait été bien d'avoir des contraintes empêchant de planifier des tâches ou de réserver des salles dans le passé, c'est-à-dire pour une date antérieure à la date actuelle. De plus, il n'est actuellement pas possible de planifier des tâches ou des réservations de manière plus précise que pour une journée, ce qui est assez irréaliste. Il aurait été bien de pouvoir planifier pour une intervalle de temps, avec une date de début et une date de fin. 
+Il aurait été bien de pouvoir planifier des tâches ou des réservations de manière plus précise que pour une journée. En effet il est assez irréaliste qu'une personne ne fasse qu'une tâche pendant toute une journée. Il aurait été bien de pouvoir planifier des tâches ou des réservations pour une intervalle de temps, avec une date de début et une date de fin. 
 
 \subsection{Contraintes sur les réservations}
 Actuellement il est possible de réserver une salle même si on n'a pas définit de tâche, ce qui n'est pas optimal pour le suivi du planning des personnes de l'université.
+
+\subsection{Utilisation d'incrémentation automatique pour les clés primaires}
+Actuellement les pièces sont identifiés par une clé primaire $s_{i}$ et les personnes par $p_{i}$ où $i$ est un entier naturel non nul. Il aurait peut-être été préférable d'utiliser une incrémentation automatique pour les clés primaires de ces deux tables pour ne pas devoir renseigner la valeur de la clé primaire lors d'insertions dans celles-ci.
