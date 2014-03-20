@@ -242,6 +242,7 @@ END $$ LANGUAGE 'plpgsql';
 -- Vérifications pour une réservation
 -- 	- La personne doit être un MCF, un PU ou un BIATOSS
 -- 	- La salle ne doit pas déjà être réservée
+--	- Les BIATOSS ne peuvent réserver que des salles de type 'Autre'
 -- 	- La personne doit réserver une salle cohérente avec la tâche annoncée
 CREATE OR REPLACE FUNCTION testReservation() RETURNS trigger AS $$
 DECLARE
@@ -291,7 +292,7 @@ BEGIN
 			RETURN NEW;
 		END IF;
 
-		-- Les BIATOSS ne réservent que des salles de type 'Autre'
+		-- Les BIATOSS ne peuvent réserver que des salles de type 'Autre'
 		IF (gradePer = 'BIATOSS' AND salleTache <> 'Autre') THEN
 			RAISE EXCEPTION 'Les BIATOSS ne peuvent réserver que des salles de type Autre';
 		END IF;
@@ -385,14 +386,14 @@ BEFORE INSERT OR UPDATE ON tache
 FOR EACH ROW EXECUTE PROCEDURE testTache();
 
 -- Les droits
-GRANT SELECT, UPDATE, DELETE ON tache TO grtt42;
-GRANT SELECT, UPDATE, DELETE ON passepar TO grtt42;
-GRANT SELECT, UPDATE, DELETE ON piece TO grtt42;
-GRANT SELECT, UPDATE, DELETE ON personne TO grtt42;
-GRANT SELECT, UPDATE, DELETE ON rapport_activite TO grtt42;
-GRANT SELECT, UPDATE, DELETE ON intrusion TO grtt42;
-GRANT SELECT, UPDATE, DELETE ON appartient TO grtt42;
-GRANT SELECT, UPDATE, DELETE ON reservation TO grtt42;
+GRANT SELECT, UPDATE tache TO grtt42;
+GRANT SELECT, UPDATE passepar TO grtt42;
+GRANT SELECT, UPDATE piece TO grtt42;
+GRANT SELECT, UPDATE personne TO grtt42;
+GRANT SELECT, UPDATE rapport_activite TO grtt42;
+GRANT SELECT, UPDATE intrusion TO grtt42;
+GRANT SELECT, UPDATE appartient TO grtt42;
+GRANT SELECT, UPDATE reservation TO grtt42;
 GRANT SELECT ON tache TO grtt11;
 GRANT SELECT ON passepar TO grtt11;
 GRANT SELECT ON piece TO grtt11;
