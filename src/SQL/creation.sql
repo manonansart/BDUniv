@@ -186,6 +186,11 @@ BEGIN
 
 END $$ LANGUAGE 'plpgsql';
 
+-- Vérifications pour les propriétaires de pièce
+-- 	- La personne ne peut être un PE ou un Etudiant
+-- 	- La personne n'est pas déjà propriétaire de la pièce
+-- 	- La pièce est bien un bureau
+-- 	- La pièce ne compte pas plus de 2 propriétaires
 CREATE OR REPLACE FUNCTION testAppartient() RETURNS trigger AS $$
 DECLARE
 	gradePer VARCHAR;
@@ -211,18 +216,22 @@ BEGIN
 	FROM appartient
 	WHERE idP = NEW.idP;
 
+	-- La personne ne peut être un PE ou un Etudiant
 	IF (gradePer = 'PE' OR gradePer = 'Etudiant') THEN
 		RAISE EXCEPTION '% ne peut être un propriétaire car c''est un %.', NEW.idPers, gradePer;
 	END IF;
 
+	-- La personne n'est pas déjà propriétaire de la pièce
 	IF (possedeDejaPiece = 1) THEN
 		RAISE EXCEPTION 'La personne % est déjà propriétaire de la pièce %.', NEW.idPers, NEW.idP;
 	END IF;
 
+	-- La pièce est bien un bureau
 	IF (typePiece <> 'Bureau') THEN
 		RAISE EXCEPTION 'La pièce % n''est pas un bureau et ne peut donc appartenir à personne.', NEW.idP;
 	END IF;
 
+	-- La pièce ne compte pas plus de 2 propriétaires
 	IF (nbProprietaires >= 2) THEN
 		RAISE EXCEPTION 'La pièce % possède déjà 2 propriétaires et ne peut donc en avoir un troisième.', NEW.idP;
 	END IF;
