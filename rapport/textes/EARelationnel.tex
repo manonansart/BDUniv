@@ -15,24 +15,24 @@ En suivant chaque étape du cours, nous avons obtenu les résultats suivants :
 	\item Passage des entités en relations :
 		\begin{itemize}
 			\item \code{piece}(idPiece, type, latitude, longitude) : l'attribut composite coord\_GPS est remplacé par ces 2 attributs, latitude et longitude.
-			\item \code{personne}(id, nom, grade)
+			\item \code{personne}(idPers, nom, grade)
 			\item \code{tache}(date, tache) 
 		\end{itemize}
 	\item Passage des entités faibles en relations : rien à faire puisqu'il n'y a pas d'entités faibles
 	\item Association binaire 1,1 par clés étrangères :
 		\begin{itemize}
 			\item \code{piece}(idPiece, type, latitude, longitude) : schéma inchangé
-			\item \code{personne}(id, nom, grade) : schéma inchangé
-			\item \code{tache}(date, tache, id) : ajout de la clé étrangère id, clé de \code{personne} car il y a une cardinalité 1,1
+			\item \code{personne}(idPers, nom, grade) : schéma inchangé
+			\item \code{tache}(date, tache, id) : ajout de la clé étrangère idPers, clé de \code{personne} car il y a une cardinalité 1,1
 		\end{itemize}
 	\item Assocations binaires M,N :
 		\begin{itemize}
 			\item \code{piece}(idP, type, latitude, longitude) : schéma inchangé
 			\item \code{personne}(idPers, nom, grade) : schéma inchangé
 			\item \code{tache}(date, tache, idPers) : schéma inchangé
-			\item \code{appartient}(idP, idPers) : création de la relation \code{appartient} à cette étape
-			\item \code{passepar}(idP, idPers, date) : création de la relation \code{passepar} à cette étape
-			\item \code{reservation}(idP, idPers, date) : création de la relation \code{reservation} à cette étape
+			\item \code{appartient}(idP, idPers) : création de la relation \code{appartient} à cette étape. Étant une table de liaison entre \code{piece} et \code{personne}, on y met les clés étrangères de ces tables. Ces seules clés permettent de modéliser la possession d'une pièce par une personne donc on n'ajoute aucun attribut. 
+			\item \code{passepar}(idP, idPers, date) : création de la relation \code{passepar} à cette étape. Étant une table de liaison entre \code{piece} et \code{personne}, on y met les clés étrangères de ces tables. Nous devons ajouter un attribut \code{date} car nous le passage d'une personne dans une pièce doit être daté.
+			\item \code{reservation}(idP, idPers, date) : création de la relation \code{reservation} à cette étape. Étant une table de liaison entre \code{piece} et \code{personne}, on y met les clés étrangères de ces tables. Nous devons ajouter un attribut \code{date} car la réservation d'une salle par une personne d'une pièce est pour une date précise.
 		\end{itemize}
 	\item Il n'y a pas d'attributs multi-valués ni d'association n-aire.
 \end{enumerate}
