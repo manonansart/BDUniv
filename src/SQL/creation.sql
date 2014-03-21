@@ -3,7 +3,9 @@ CREATE TABLE piece(
 	type VARCHAR(15),
 	gps_lat REAL,
 	gps_long REAL,
-	CHECK (type IN ('Bureau', 'Salle de Cours', 'Autre'))
+	CHECK (type IN ('Bureau', 'Salle de Cours', 'Autre')),
+	CHECK (gps_lat >= 0 AND gps_lat <= 90),
+	CHECK (gps_long >= -180 AND gps_long <= 180)
 );
 
 CREATE TABLE personne(

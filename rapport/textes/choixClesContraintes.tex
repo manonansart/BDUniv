@@ -14,6 +14,14 @@ Enfin, pour la table \textbf{\code{appartient}} on choisit comme clé primaire l
 
 	Nous avons également veillé au respect des contraintes pour les clés étrangères en utilisant \code{references}. Ainsi, pour la table \code{tache}, nous avons indiqué que l'attribut \code{idPers} était une clé étrangère faisant référence à \code{idPers}, la clé de \code{personne}. De même, pour les tables \code{appartient}, \code{passePar} et \code{reservation}, \code{idP} et \code{idPers} sont deux clés étrangères correspondant respectivement aux clés primaires de \code{piece} et \code{personne}.\\
 
+\subsubsection{Table des pièces}
+	Nous vérifions ici plusieurs contraintes grâce au script de création de la table.
+	\begin{enumerate}
+		\item Le type de la pièce ne peut être que : \textit{Bureau}, \textit{Salle De Cours} ou \textit{Autre}.
+		\item La latitude de la position GPS de la pièce peut être entre 0 et 90 degrès.
+		\item La longitude de la position GPS de la pièce peut être entre -180 et 180 degrès.
+	\end{enumerate}
+
 \subsubsection{Table des propriétaires}
 	Concernant la table appartient, seules les personnes dont le grade est \code{MCF}, \code{PU} ou \code{BIATOSS} peuvent posséder une pièce et la pièce possédée doit être de type \code{Bureau}.\\
 
@@ -27,4 +35,4 @@ Enfin, pour la table \textbf{\code{appartient}} on choisit comme clé primaire l
 	Dans une dernière partie, la fonction regarde si la personne a déjà planifié une tâche à cette date et si c'est la cas, que le type de la salle est bien cohérent avec celui de la tâche.
 
 \subsubsection{Table des tâches}
-	Enfin, un dernier trigger, \code{triggerTache}, associé à la fonction \code{testTache()}, vérifie les contraintes concernant la table tache, c'est-à-dire que la personne n'est pas de type \code{PE} et que la tâche planifiée est bien cohérente avec le grade de la personne.
+	Enfin, un dernier trigger, \code{triggerTache}, associé à la fonction \code{testTache()}, vérifie les contraintes concernant la table tache, c'est-à-dire que la personne n'est pas de type \code{PE} et que la tâche planifiée est bien cohérente avec le grade de la personne. Nous vérifions que la tâche est : \textit{Enseignement}, \textit{Recherche} ou \textit{Réunion}.
