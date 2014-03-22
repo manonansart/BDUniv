@@ -3,7 +3,7 @@ Pour les tables \textbf{\code{piece}} et \textbf{\code{personne}} on choisit com
 
 Pour les tables \textbf{\code{passePar}} et \textbf{\code{reservation}} nous devons définir comme clé primaire les attributs \code{idP}, \code{idPers} et \code{date} car on référence un événement qui se déroule à une date et qui lie une pièce à une personne. Il est nécessaire d'utiliser les 3 attributs comme clés primaires dans ces deux tables pour identifier un tuple. Cette tables sont des tables de liaison donc on utilise les clés primaires des tables que l'on veut lier.\\
 
-Pour la table \textbf{\code{tache}}  nous devons définir comme clé primaire les attributs \code{tache}, \code{idPers} et \code{date} car on référence une tache planifiée par une personne à une date. L'explication est très similaire au paragraphe précédent. Cette tables sont des tables de liaison donc on utilise les clés primaires des tables que l'on veut lier.\\
+Pour la table \textbf{\code{tache}}  nous devons définir comme clé primaire les attributs \code{tache}, \code{idPers} et \code{date} car on référence une tache planifiée par une personne à une date. L'explication est très similaire au paragraphe précédent. Cette table est une table de liaison donc on utilise les clés primaires des tables que l'on veut lier.\\
 
 Enfin, pour la table \textbf{\code{appartient}} on choisit comme clé primaire les attributs \code{idP} et \code{idPers} pour permettre de dire qu'une personne est propriétaire d'une pièce. Cette table est une table de liaison donc on utilise les clés primaires des tables que l'on veut lier.
 
@@ -12,20 +12,20 @@ Enfin, pour la table \textbf{\code{appartient}} on choisit comme clé primaire l
 \subsubsection{Clés primaires et étrangères}
 	Parmi les contraintes qu'il nous a semblé primordial de respecter, la première était l'unicité des clés primaires qui devaient également être non nulles. C'est pourquoi pour chaque table nous avons renseigné les clés primaires décrites précédemment par \code{PRIMARY KEY}.\\
 
-	Nous avons également veillé au respect des contraintes pour les clés étrangères en utilisant \code{references}. Ainsi, pour la table \code{tache}, nous avons indiqué que l'attribut \code{idPers} était une clé étrangère faisant référence à \code{idPers}, la clé de \code{personne}. De même, pour les tables \code{appartient}, \code{passePar} et \code{reservation}, \code{idP} et \code{idPers} sont deux clés étrangères correspondant respectivement aux clés primaires de \code{piece} et \code{personne}.\\
+	Nous avons également veillé au respect des contraintes pour les clés étrangères en utilisant \code{REFERENCES}. Ainsi, pour la table \code{tache}, nous avons indiqué que l'attribut \code{idPers} était une clé étrangère faisant référence à \code{idPers}, la clé de \code{personne}. De même, pour les tables \code{appartient}, \code{passePar} et \code{reservation}, \code{idP} et \code{idPers} sont deux clés étrangères correspondant respectivement aux clés primaires de \code{piece} et \code{personne}.\\
 
 \subsubsection{Table des pièces}
 	Nous vérifions ici plusieurs contraintes grâce au script de création de la table.
 	\begin{enumerate}
 		\item Le type de la pièce ne peut être que : \textit{Bureau}, \textit{Salle De Cours} ou \textit{Autre}.
-		\item La latitude de la position GPS de la pièce peut être entre 0 et 90 degrès.
-		\item La longitude de la position GPS de la pièce peut être entre -180 et 180 degrès.
+		\item La latitude de la position GPS de la pièce peut être entre 0 et 90 degrés.
+		\item La longitude de la position GPS de la pièce peut être entre -180 et 180 degrés.
 	\end{enumerate}
 
 \subsubsection{Table des propriétaires}
 	Concernant la table appartient, seules les personnes dont le grade est \code{MCF}, \code{PU} ou \code{BIATOSS} peuvent posséder une pièce et la pièce possédée doit être de type \code{Bureau}.\\
 
-	Afin de vérifier que ces conditions sont bien respectées nous avons créé le trigger \code{triggerAppartient} qui appelle la fonction \code{testAppartient()}. Cette fonction vérifie que la personne n'est pas de type \code{Etudiant} ou \code{PE} et que la pièce est bien de type \code{Bureau}. Nous vérifions également dans cette fonction que la personne n'est pas déjà propriétaire de la pièce et qu'on ne tente pas de créer un troisième propriétaire. Cette dernière contrainte nous est imposée par le modèle Entité-Association.
+	Afin de vérifier que ces conditions sont bien respectées nous avons créé le trigger \code{triggerAppartient} qui appelle la fonction \code{testAppartient()}. Cette fonction vérifie que la personne n'est pas de type \code{Etudiant} ou \code{PE} et que la pièce est bien de type \code{Bureau}. Nous vérifions également dans cette fonction que la personne n'est pas déjà propriétaire de la pièce et qu'on ne tente pas de créer un troisième propriétaire. Ces dernières contraintes nous sont imposées par le modèle Entité-Association.
 
 \subsubsection{Table des réservations}
 	La table réserve nécessite plusieurs contraintes : seules les personnes dont le grade est \code{MCF}, \code{PU} ou \code{BIATOSS} peuvent réserver une salle, il faut que la salle réservée ait un type cohérent avec le grade de la personne et la tâche, si celle-ci existe, pour laquelle elle est réservée. De plus la salle ne doit pas faire l'objet d'une autre réservation pour la même date. Nous vérifions chacune de ces contraintes à l'aide du trigger \code{triggerReservation}, correspondant à la fonction \code{testReservation()}.\\
